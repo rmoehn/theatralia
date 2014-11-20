@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rmoehn/theatralia.svg?branch=master)](https://travis-ci.org/rmoehn/theatralia)
+
 # theatralia
 
 The project uses [Midje](https://github.com/marick/Midje/).
