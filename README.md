@@ -14,6 +14,27 @@ The project uses [Midje](https://github.com/marick/Midje/).
 watcher on the code files. If they change, only the relevant tests will be
 run again.
 
+## Notes from the start
+
+I looked at current ways to set up a Clojure web application. The most
+prominent thing applicable to this application (mainly server-side
+stuff) appeared [Luminus](http://www.luminusweb.net/). It claims to be
+minimal, but when I look at the Leiningen template, it still sets up a
+lot of stuff that I'd like to set up step by step. Additionally it talks
+about some things I wouldn't use in my project, most prominently Selmer
+for templating and non-Datomic databases. It doesn't talk about Datomic
+anywhere, which makes me suspicious. However, Luminus looks like a good
+orientation for some things, so you'll probably see comments like
+»stolen from Luminus«.
+
+A second thing you should know is Stuart Sierra's
+[component](https://github.com/stuartsierra/component) framework.
+Consume these:
+
+ - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
+ - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
+
+
 ## License
 
 The MIT License (MIT)
