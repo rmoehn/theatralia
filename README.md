@@ -34,6 +34,12 @@ Consume these:
  - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
  - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
 
+## Credits
+
+The previous section already named some resources I used for my work. Most of
+the source files will also contain a Credits section referencing places on the
+web (mainly), where I found snippets or hints about how to write a particular
+piece of code.
 
 ## License
 
