@@ -24,8 +24,8 @@ lot of stuff that I'd like to set up step by step. Additionally it talks
 about some things I wouldn't use in my project, most prominently Selmer
 for templating and non-Datomic databases. It doesn't talk about Datomic
 anywhere, which makes me suspicious. However, Luminus looks like a good
-orientation for some things, so you'll probably see comments like
-»stolen from Luminus«.
+orientation for some things, so probably it will will appear in the
+[Credits section](#credits).
 
 A second thing you should know is Stuart Sierra's
 [component](https://github.com/stuartsierra/component) framework.
@@ -34,7 +34,7 @@ Consume these:
  - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
  - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
 
-## Credits
+## Credits <a name="credits"></a>
 
 The previous section already named some resources I used for my work. Most of
 the source files will also contain a Credits section referencing places on the
