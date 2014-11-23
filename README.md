@@ -41,6 +41,17 @@ the source files will also contain a Credits section referencing places on the
 web (mainly), where I found snippets or hints about how to write a particular
 piece of code.
 
+## How to test on a local Tomcat
+
+ 1. Run `lein ring uberwar`.
+ 2. Copy `target/theatralia.war` to your Tomcat's webapps directory, probably
+    `/var/lib/tomcat8/webapps/`.
+ 3. Restart Tomcat.
+ 4. Point your browser to http://localhost:8080/theatralia. If Tomcat listens on
+    a different port, you have to use that, of course.
+
+Credits: https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
+
 ## License
 
 The MIT License (MIT)
