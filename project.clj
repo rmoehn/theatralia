@@ -8,7 +8,7 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
                    [[midje "1.6.3" :exclusions [org.clojure/clojure]]
-                    [org.clojure/tools.namespace "0.2.3"]]
+                    [org.clojure/tools.namespace "0.2.7"]]
                    :plugins
                    [[lein-midje "3.1.3"]]}}
   :ring {:init theatralia.main/start-production-system
