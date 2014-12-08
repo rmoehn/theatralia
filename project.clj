@@ -1,4 +1,6 @@
 (defproject theatralia "0.0.1-SNAPSHOT"
+  ;; Note that I'm too lazy to update this version number everytime I tag a
+  ;; commit in order to be deployed to the web server. See also the README.
   :description "Cool new project to do things and stuff"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [com.stuartsierra/component "0.2.2"]
