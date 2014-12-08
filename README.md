@@ -60,7 +60,7 @@ Credits:
 `.travis.yml` specifies that every tagged commit gets deployed to GitHub
 Releases (and eventually to the web server). Commits that are not tagged don't
 get deployed. I'm too lazy to write a full new version number for every version
-I want to deploy for testing, so tags will be `t<number>` with.
+I want to deploy for testing, so tags will be `t<number>`.
 
 ## License
 
