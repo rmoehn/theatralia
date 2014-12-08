@@ -50,7 +50,10 @@ piece of code.
  4. Point your browser to http://localhost:8080/theatralia. If Tomcat listens on
     a different port, you have to use that, of course.
 
-Credits: https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
+Credits:
+ 
+ - https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
+ - https://github.com/weavejester/lein-ring
 
 ## License
 

@@ -3,7 +3,7 @@ lein: lein2
 jdk:
 - openjdk7
 - openjdk6
-install: lein uberwar
+install: lein ring uberwar
 script: lein midje
 deploy:
   provider: releases
