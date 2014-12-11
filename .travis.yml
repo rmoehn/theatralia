@@ -10,6 +10,6 @@ deploy:
   api_key:
     secure: QUD36XNZNlUEqBf0fcO+oj6Ti22ZfaGtdSxbbIHhe7Ka6IBXFGf7MMO4FqpCPsLLmjuxT5eT6nwXtXtYi6UoqxsUmwV6yWYqqYqimoCf3/o3f4DqiBPSz8yK3Ff+TP/7Kc0ley2Ii5IBjgVQAJuCAnmzIXJ4lsc1ugA+IG5w/sA=
   file: target/theatralia.war
-  tags: true
   on:
+    tags: true
     repo: rmoehn/theatralia
