@@ -4,6 +4,7 @@ jdk:
 - openjdk7
 install: lein ring uberwar
 script: lein midje
+before_deploy: git fetch --tags
 deploy:
   provider: releases
   skip_cleanup: true
