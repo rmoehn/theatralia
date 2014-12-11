@@ -12,4 +12,5 @@ deploy:
   file: target/theatralia.war
   on:
     tags: true
+    all_branches: true
     repo: rmoehn/theatralia
