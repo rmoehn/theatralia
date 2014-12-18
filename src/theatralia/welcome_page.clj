@@ -15,4 +15,5 @@
 
 (html/deftemplate index main-html
   []
+  [:title] (html/content "Welcome to Theatralia!")
   [:#main-content] (html/content (welcome-snippet)))
