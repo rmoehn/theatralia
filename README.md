@@ -34,13 +34,6 @@ Consume these:
  - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
  - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
 
-## CSS
-
-For now I'm trying CSS generation with
-[Garden](https://github.com/noprompt/garden). However, since I don't know much
-about CSS, it might be quicker to use some framework. I will have a look at
-[YAML](http://www.yaml.de/) and [Compass](http://compass-style.org/).
-
 ## Credits <a name="credits"></a>
 
 The previous section already named some resources I used for my work. Most of
