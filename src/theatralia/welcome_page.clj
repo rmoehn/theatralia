@@ -12,13 +12,19 @@
 
 (html/defsnippet welcome-snippet
   welcome-html
-  [:body :> html/any-node]
+  [:#main]
+  [] identity)
+
+(html/defsnippet login-snippet
+  welcome-html
+  [:#login]
   [] identity)
 
 (html/deftemplate index main-html
   []
   [:title] (html/content "Welcome to Theatralia!")
-  [:#main-content] (html/content (welcome-snippet)))
+  [:#main-content] (html/content (welcome-snippet))
+  [:#global-tools] (html/content (login-snippet)))
 
 (def css-data [[:html {:font-family "sans-serif"}]
                [:#theatralia {:font-family "fancy"}]
