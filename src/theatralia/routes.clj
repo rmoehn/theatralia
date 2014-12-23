@@ -9,6 +9,7 @@
 (cj/defroutes routes
   (cj/GET "/" [] (wp/index))
   (cj/GET "/main.css" [] (wp/main-css))
+  (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
 (defrecord Routes [handler])

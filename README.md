@@ -62,6 +62,16 @@ Releases (and eventually to the web server). Commits that are not tagged don't
 get deployed. I'm too lazy to write a full new version number for every version
 I want to deploy for testing, so tags will be `t<number>`.
 
+## Fonts
+
+The fonts are not yet under version control, because I'm not sure what fonts to
+use and whether to use custom fonts at all. So I don't want to litter the repo
+with additions and removals of binaries or whatever fonts are. At the moment I'm
+using [Linux Libertine and Biolinum](http://www.linuxlibertine.org/), but those
+look a bit horrible in the browser. If for some reason you want to play around
+with Theatralia, just download the WOFF fonts from the website and extract them
+into `resource/public/fonts`.
+
 ## License
 
 The MIT License (MIT)
@@ -85,3 +95,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+### Exception
+
+The fonts lying in `resources/public/fonts` are not my work and remain under
+their original authorship and license. See the contents of the directory for
+copyright and licensing information. As of now, they are not under version
+control anyway.
