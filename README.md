@@ -72,6 +72,19 @@ look a bit horrible in the browser. If for some reason you want to play around
 with Theatralia, just download the WOFF fonts from the website and extract them
 into `resource/public/fonts`.
 
+## Colours
+
+Right now I'm using parts of [Solarized](http://ethanschoonover.com/solarized)
+as a colour scheme, which is easy on the eyes. The problem is that one has to
+get used to it. So it might scare off people. The page's flat look came
+naturally with the colour scheme (maybe also inspired by [Light
+Table](http://lighttable.com/)) and is slightly unusual, too. These things are
+by no means final. I just wanted some basis to work with. (In case you're
+wondering about the inconsistency of the spelling of »color« in the source code
+and »colour« here: I use American Englisch spelling in source code in order to
+prevent bugs, since most programmers are accustomed to American English
+spelling. Everything else is not as critical, so I stay British.)
+
 ## License
 
 The MIT License (MIT)
