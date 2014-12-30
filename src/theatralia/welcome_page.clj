@@ -13,6 +13,7 @@
 ;;;  - http://stackoverflow.com/questions/15193848/i-want-my-label-to-vertically-align-with-my-input-field
 ;;;  - http://www.w3schools.com/css/default.asp
 ;;;  - http://stackoverflow.com/questions/1676891/mapping-a-function-on-the-values-of-a-map-in-clojure
+;;;  - http://philipwalton.github.io/solved-by-flexbox/
 
 (def ^:private main-html (io/resource "templates/around.html"))
 (def ^:private welcome-html (io/resource "templates/welcome.html"))
@@ -46,6 +47,7 @@
    :base3     [253 246 227]
    :yellow    [181 137   0]
    :orange    [203  75  22]
+   :accent    [203  75  22]
    :red       [220  50  47]
    :magenta   [211  54 130]
    :violet    [108 113 196]
@@ -68,13 +70,32 @@
      [:html {:background-color (color :base3)
              :color (color :base00)}]
      [:header {:background-color (color :base2)
-               :color (color :base0)}]
-     [:.theatralia {:font-family "my-serif" :font-weight "bold"}]
-     [:#main-content {:float "left"}]
+               :color (color :base0)
+               :padding (u/em 0.5)
+               }]
+     [:body {:display "flex"
+             :min-height (u/vh 100)
+             :margin 0
+             :flex-direction "column"}]
+     [:main {:display "flex"
+             :flex 1
+             :flex-direction "row"
+             :justify-content "center"}]
+     [:#home {:font-family "my-serif"
+              :font-weight "bold"
+              :font-size "large"
+              :color (color :accent)}]
+     [:h1 {:font-family "my-serif"
+           :color (color :accent)}]
+     [:#main-content {:margin (u/em 0.5)}]
      [:p {:max-width (u/ch 65)}]
-     [:#global-tools {:float "left"}]
+     [:#global-tools {:margin-top (u/em 3)
+                      :margin-left (u/em 2)}]
+     [:.stack {:display "flex"
+               :align-items "center"
+               :flex-direction "column"}]
      [:label :input {:display "block"}]
-     [:a:link {:color (color :violet)}]
+     [:a:link {:color (color :accent)}]
      [:a:visited {:color (color :base1)}]
      [:fieldset {:border-style "none"
                  :background-color (color :base2)}]
@@ -85,12 +106,14 @@
      ["input[type=submit]" {:background-color (color :base3)}]
      [:button {:background-color (color :base2)
                :color (color :base0)
+               :font-size "inherit"
+               :width "10em"
                :border (defaults :border)}]
-     [:footer {:clear "both"
+     [:footer {;:clear "both"
                :color (color :base1)
                :text-align "center"
-               :font-size "small"
-               :padding-top (u/ex 2)}]]))
+               :padding (u/em 0.5)
+               :font-size "small"}]]))
 
 (defn main-css []
   {:status 200
