@@ -26,6 +26,14 @@
      :linux-biolinum
      (build-font-css "my-sans" "/fonts" "LinBiolinum_" ".woff"
                      ll-map ["R" "RB" "RI"])
+     :theano-didot
+     (build-font-css "my-serif" "/fonts/theano-didot" "theanodidot-"
+                     "-webfont.woff" (make-css-map-for-style "regular")
+                     [["regular"]])
+     :chivo
+     (build-font-css "my-sans" "/fonts/chivo" "chivo-" "-webfont.woff"
+                     (make-css-map-for-style "regular" "black" "italic")
+                     [["regular"] ["black"] ["black" "italic"]])
      :dejavu
      (build-font-css "my-sans" "/fonts" "DejaVuSans-" "-webfont.woff"
                      djv-map [[""] ["Bold"] ["Oblique"] ["Bold" "Oblique"]])}))

@@ -64,13 +64,24 @@ I want to deploy for testing, so tags will be `t<number>`.
 
 ## Fonts
 
-The fonts are not yet under version control, because I'm not sure what fonts to
-use and whether to use custom fonts at all. So I don't want to litter the repo
-with additions and removals of binaries or whatever fonts are. At the moment I'm
-using [Linux Libertine and Biolinum](http://www.linuxlibertine.org/), but those
-look a bit horrible in the browser. If for some reason you want to play around
-with Theatralia, just download the WOFF fonts from the website and extract them
-into `resource/public/fonts`.
+The fonts are still not under version control, because I'm waiting for the
+product owner's approval. So I don't want to litter the repo with additions and
+removals of binaries or whatever fonts are.
+
+The fonts used are:
+
+ - [Theano Didot](http://www.fontsquirrel.com/fonts/Theano-Didot) by Alexey
+   Kryukov as a serif font.
+ - [Chivo](http://www.omnibus-type.com/) by Omnibus Type as a sans-serif font.
+ - [GFS Elpis](http://www.greekfontsociety.gr/pages/en_typefaces20th.html) by
+   Natasha Raissaki, published by the Greek Font Society for the Big Theta.
+
+If fonts are not available as WOFF, I use the [Font
+Squirrel](http://www.fontsquirrel.com/) webfont generator for conversion and
+packaging.
+
+Note that I'm not a font expert at all, so I welcome all suggestions for
+improvement.
 
 ## Colours
 

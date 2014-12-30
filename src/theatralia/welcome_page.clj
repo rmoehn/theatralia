@@ -65,8 +65,8 @@
 
 (def ^:private css-data
   (concat
-    (font-declaration :linux-libertine)
-    (font-declaration :linux-biolinum)
+    (font-declaration :theano-didot)
+    (font-declaration :chivo)
     [[:* {:font-family "my-sans"}]
      [:html {:background-color (color :base3)
              :color (color :base00)}]
@@ -83,13 +83,14 @@
              :flex-direction "row"
              :justify-content "center"}]
      [:#home {:font-family "my-serif"
-              :font-weight "bold"
               :font-size "large"
               :color (color :accent)}]
      [:h1 {:font-family "my-serif"
+           :font-weight "normal"
+           :font-size "xx-large"
            :color (color :accent)}]
-     [:#main-content {:margin (u/em 0.5)}]
-     [:p {:max-width (u/ch 65)}]
+     [:#main-content {:margin (u/em 0.4)}]
+     [:p {:max-width (u/ch 62)}]
      [:#global-tools {:margin-top (u/em 3)
                       :margin-left (u/em 2)}]
      [:.stack {:display "flex"
@@ -97,7 +98,7 @@
                :flex-direction "column"}]
      [:label :input {:display "block"}]
      [:a:link {:color (color :accent)}]
-     [:a:visited {:color (color :base1)}]
+     [:a:visited {:color (color :accent)}]
      [:fieldset {:border-style "none"
                  :background-color (color :base2)}]
      [:input {:background-color "inherit"
