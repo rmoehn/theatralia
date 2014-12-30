@@ -66,6 +66,7 @@
 (def ^:private css-data
   (concat
     (font-declaration :linux-libertine)
+    (font-declaration :linux-biolinum)
     [[:* {:font-family "my-sans"}]
      [:html {:background-color (color :base3)
              :color (color :base00)}]

@@ -21,11 +21,11 @@
   (let [ll-map (make-css-map-for-style \R \B \I)
         djv-map (make-css-map-for-style "" "Bold" "Oblique")]
     {:linux-libertine
-     (concat
-       (build-font-css "my-sans" "/fonts" "LinBiolinum_" ".woff"
-                       ll-map ["R" "RB" "RI"])
-       (build-font-css "my-serif" "/fonts" "LinLibertine_" ".woff"
-                       ll-map ["R" "RB" "RI" "RBI"]))
+     (build-font-css "my-serif" "/fonts" "LinLibertine_" ".woff"
+                     ll-map ["R" "RB" "RI" "RBI"])
+     :linux-biolinum
+     (build-font-css "my-sans" "/fonts" "LinBiolinum_" ".woff"
+                     ll-map ["R" "RB" "RI"])
      :dejavu
      (build-font-css "my-sans" "/fonts" "DejaVuSans-" "-webfont.woff"
                      djv-map [[""] ["Bold"] ["Oblique"] ["Bold" "Oblique"]])}))
