@@ -1,0 +1,31 @@
+(ns theatralia.style.fonts
+  (:require [clojure.string :as string]
+            [garden.stylesheet :refer [at-font-face]]))
+
+(defn- make-css-map-for-style [& args]
+  (zipmap args [{} {:font-weight "bold"} {:font-style "italic"}]))
+
+(defn- build-font-css [family-name fonts-path font-prefix font-suffix
+                       css-map-for-style styles-to-build]
+  (map
+    (fn [style]
+      (let [full-name (str font-prefix (string/join style) font-suffix)
+            path (str fonts-path "/" full-name)
+            style-map (apply merge (map css-map-for-style (seq style)))]
+        (at-font-face (merge {:font-family family-name
+                              :src (str "url(" path ")")}
+                             style-map))))
+    styles-to-build))
+
+(def font-declaration
+  (let [ll-map (make-css-map-for-style \R \B \I)
+        djv-map (make-css-map-for-style "" "Bold" "Oblique")]
+    {:linux-libertine
+     (concat
+       (build-font-css "my-sans" "/fonts" "LinBiolinum_" ".woff"
+                       ll-map ["R" "RB" "RI"])
+       (build-font-css "my-serif" "/fonts" "LinLibertine_" ".woff"
+                       ll-map ["R" "RB" "RI" "RBI"]))
+     :dejavu
+     (build-font-css "my-sans" "/fonts" "DejaVuSans-" "-webfont.woff"
+                     djv-map [[""] ["Bold"] ["Oblique"] ["Bold" "Oblique"]])}))

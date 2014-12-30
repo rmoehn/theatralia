@@ -1,11 +1,11 @@
 (ns theatralia.welcome-page
   (:require [net.cgrand.enlive-html :as html]
             [garden.core :refer [css]]
-            [garden.stylesheet :refer [at-font-face]]
             [garden.units :as u]
             [garden.color :refer [rgb]]
             [clojure.string :as string]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [theatralia.style.fonts :refer [font-declaration]]))
 ;;; Credits:
 ;;;  - https://github.com/cgrand/enlive
 ;;;  - https://github.com/swannodette/enlive-tutorial/
@@ -58,36 +58,12 @@
 
 (def ^:private color (map-vals #(apply rgb %) color-vec-for))
 
-(def ^:private css-map-for-style
-  {\R {}
-   \B {:font-weight "bold"}
-   \I {:font-style "italic"} })
-
-(defn- build-font-css [family-name fonts-path font-basename styles-to-build]
-  (map
-    (fn [style]
-      (let [full-name (str font-basename "_" style ".woff")
-            path (str fonts-path "/" full-name)
-            style-map (apply merge (map css-map-for-style (seq style)))]
-        (at-font-face (merge {:font-family family-name
-                              :src (str "url(" path ")")}
-                             style-map))))
-    styles-to-build))
-
-
-
-
-(def ^:private font-declaration
-  (concat
-    (build-font-css "my-sans" "/fonts" "LinBiolinum" ["R" "RB" "RI"])
-    (build-font-css "my-serif" "/fonts" "LinLibertine" ["R" "RB" "RI" "RBI"])))
-
 (def ^:private defaults
   {:border [[(u/em 0.1) "solid" (color :base1)]]})
 
 (def ^:private css-data
   (concat
-    font-declaration
+    (font-declaration :linux-libertine)
     [[:* {:font-family "my-sans"}]
      [:html {:background-color (color :base3)
              :color (color :base00)}]
