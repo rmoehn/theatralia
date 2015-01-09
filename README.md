@@ -96,6 +96,18 @@ and »colour« here: I use American Englisch spelling in source code in order to
 prevent bugs, since most programmers are accustomed to American English
 spelling. Everything else is not as critical, so I stay British.)
 
+## Build system
+
+I cobbled together my `project.clj` and corresponding directory layout following
+some of David Nolen's templates:
+[om-async-tut](https://github.com/swannodette/om-async-tut),
+[mies](https://github.com/swannodette/mies) and
+[mies-om](https://github.com/swannodette/mies-om). For more information you
+should read [The Essence of ClojureScript
+Redux](http://swannodette.github.io/2015/01/02/the-essence-of-clojurescript-redux/)
+and [Waitin'](http://swannodette.github.io/2014/12/22/waitin/) (and maybe the Om
+tutorials).  
+
 ## License
 
 The MIT License (MIT)

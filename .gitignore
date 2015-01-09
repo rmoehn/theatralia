@@ -1,4 +1,6 @@
 target
 .lein-repl-history
 .nrepl-port
+.repl
+resources/public/js
 resources/public/fonts
