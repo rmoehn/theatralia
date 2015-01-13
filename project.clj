@@ -19,8 +19,14 @@
             [lein-npm "0.4.0"]]
 
   :source-paths ["src/clj" "src/cljs" "target/classes"]
+  :resource-paths ["resources"]
 
-  :clean-targets ["resources/public/js/out" "main.js" "main.min.js"]
+  :clean-targets [:target-path
+                  :compile-path
+                  "resources/public/js/out"
+                  "resources/public/js/repl-out"
+                  "resources/public/js/main.js"
+                  "resources/public/js/main.min.js"]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
