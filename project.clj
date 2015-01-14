@@ -7,7 +7,9 @@
                  [com.stuartsierra/component "0.2.2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-rc1"]
+                 [om-sync "0.1.1"]
                  [ring "1.3.1"]
+                 [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [garden "1.2.5"]
                  [enlive "1.1.5"]]
@@ -42,7 +44,7 @@
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src/clj" "src/cljs"]
+              :source-paths ["src/clj" "src/cljs"] ; Do we need target/classes?
               :compiler {
                 :output-to "resources/public/js/main.js"
                 :output-dir "resources/public/js/out"
@@ -50,7 +52,7 @@
                 :cache-analysis true
                 :source-map true}}
              {:id "release"
-              :source-paths ["src/clj" "src/cljs"]
+              :source-paths ["src/clj" "src/cljs"] ; Do we need target/classes?
               :compiler {
                 :output-to "resources/public/js/main.min.js"
                 :pretty-print false

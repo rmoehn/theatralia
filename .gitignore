@@ -4,3 +4,4 @@ target
 .repl
 resources/public/js
 resources/public/fonts
+node_modules
