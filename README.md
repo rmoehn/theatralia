@@ -41,6 +41,18 @@ the source files will also contain a Credits section referencing places on the
 web (mainly), where I found snippets or hints about how to write a particular
 piece of code.
 
+## Database
+
+I'm using [Datomic Pro Starter Edition](http://www.datomic.com/) as a database
+system. I wasn't entirely sure whether to use this or Datomic Free, but all the
+Datomic pages shouted that I should use DPSE, so I gave in. Victim of marketing?
+It does make the whole thing a bit clumsier. Especially typing my PGP password
+every time I start a REPL is annoying. However, I didn't buy in to too much,
+since all it takes to switch to Datomic Free is changing a Leiningen dependency
+and the connection URI. That's also what you could do in order to test locally
+if you don't already have Datomic Pro Starter Edition. You should go and get it,
+though! Just kidding.
+
 ## How to test on a local Tomcat
 
  1. Run `lein ring uberwar`.

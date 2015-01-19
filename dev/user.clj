@@ -11,8 +11,11 @@
 (def system nil)
 
 (defn init []
-  (alter-var-root #'system
-    (constantly (main/make-system {:port 17777}))))
+  (alter-var-root
+    #'system
+    (constantly (main/make-system
+                  {:web-server-port 17777
+                   :database-uri "datomic:dev://localhost:4334/theatralia"}))))
 
 (defn start []
   (alter-var-root #'system component/start))

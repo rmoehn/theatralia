@@ -2,6 +2,10 @@
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
   :description "Cool new project to do things and stuff"
+
+  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
+                                   :creds :gpg}}
+
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2665"]
                  [com.stuartsierra/component "0.2.2"]
@@ -12,7 +16,8 @@
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [garden "1.2.5"]
-                 [enlive "1.1.5"]]
+                 [enlive "1.1.5"]
+                 [com.datomic/datomic-pro "0.9.5130"]]
 
   :node-dependencies [[source-map-support "0.2.8"]]
 

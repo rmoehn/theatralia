@@ -1,6 +1,7 @@
 (ns theatralia.main
   (:require [com.stuartsierra.component :as component]
             [theatralia.web-server :refer [make-web-server]]
+            [theatralia.database :refer [make-database]]
             [theatralia.routes :refer [make-routes]]))
 
 ;;; Credits:
@@ -31,4 +32,5 @@
 (defn make-system [config]
   (component/system-map
     :web-app (make-routes)
-    :web-server (make-web-server (:port config))))
+    :web-server (make-web-server (:web-server-port config))
+    :database (make-database (:database-uri config))))
