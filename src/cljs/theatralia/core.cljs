@@ -13,8 +13,6 @@
 
 (enable-console-print!)
 
-(println "Hello world!")
-
 (def app-state
   (atom {}))
 
@@ -45,21 +43,25 @@
                                  (process-input owner last-input))})
         (dom/button
           #js {:onClick #(process-input owner last-input)}
-          "Send")))))
+          "Send")))
+
+    om/IDidMount
+    (did-mount [_]
+      (.focus (om/get-node owner "misc-input")))))
 
 (defn app-view [app owner]
   (do
-   (println app)
-   (reify
-    om/IRenderState
-    (render-state [_ _]
-      (om/build
-        om-sync
-        (:last-input app)
-        {:opts {:view io-view
-                :filter (comp #{:update} tx-tag)
-                :on-success (fn [res tx-data] (println res))
-                :on-error (fn [err tx-data] (println (str "Error: " err)))}})))))
+    (reify
+      om/IRender
+      (render [_]
+        (om/build
+          om-sync
+          (:last-input app)
+          {:opts
+           {:view io-view
+            :filter (comp #{:update} tx-tag)
+            :on-success (fn [res tx-data] (println res))
+            :on-error (fn [err tx-data] (println (str "Error: " err)))}})))))
 
 (let [tx-chan (chan)
       tx-pub-chan (async/pub tx-chan (fn [_] :txs))]
