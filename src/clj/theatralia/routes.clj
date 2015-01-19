@@ -17,10 +17,14 @@
   (generate-response
     {:last-input {:url "/last-input" :coll {:text "Hello World!"}}}))
 
+(defn print-and-respond [params]
+  (println (:text params))
+  (generate-response {:status :ok}))
+
 (cj/defroutes routes
   (cj/GET "/" [] (wp/index))
   (cj/GET "/init" [] (init))
-  (cj/PUT "/last-input" {params :edn-params} (println (:text params)))
+  (cj/PUT "/last-input" {params :edn-params} (print-and-respond params))
   (cj/GET "/main.css" [] (wp/main-css))
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
