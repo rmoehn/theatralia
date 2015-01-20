@@ -1,0 +1,6 @@
+[{:db/id #db/id[:db.part/db]
+  :db/ident :last-input/text
+  :db/index true
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db}]

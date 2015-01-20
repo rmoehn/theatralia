@@ -1,15 +1,24 @@
 (ns theatralia.database
   (:require [com.stuartsierra.component :as component]
-            [datomic.api :as d :refer [q db]]))
+            [clojure.java.io :as io]
+            [datomic.api :as d :refer [q db]])
+  (:import datomic.Util))
+
+(defn- load-schema [schema-loc conn]
+  (->> schema-loc
+       io/resource
+       io/reader
+       Util/readAll
+       (d/transact conn)))
 
 (defrecord Database [uri conn]
   component/Lifecycle
   (start [this]
-    (do
-      (d/create-database uri)
-      (assoc this
-             :conn
-             (d/connect uri))))
+    (let [_    (d/create-database uri)
+          conn (d/connect uri)]
+      (load-schema "database/schema.edn" conn)
+      (println "Loaded schema")
+      (assoc this :conn conn)))
   (stop [this]
     (d/shutdown true)))
 
