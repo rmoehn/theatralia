@@ -4,12 +4,22 @@
             [datomic.api :as d :refer [q db]])
   (:import datomic.Util))
 
-(defn- load-schema [schema-loc conn]
-  (->> schema-loc
-       io/resource
-       io/reader
-       Util/readAll
-       (d/transact conn)))
+(defn- no-schema-loaded? [conn]
+  (empty? (q '[:find ?e :where [?e :db/ident :last-input/text]]
+             (db conn))))
+
+(defn- load-schema
+  "Loads the Schema into the database unless it's loaded already. Blocks until
+  the transaction has completed."
+  [schema-loc conn]
+  (when (no-schema-loaded? conn)
+    (let [fut (->> schema-loc
+                   io/resource
+                   io/reader
+                   Util/readAll
+                   first
+                   (d/transact conn))]
+         @fut)))
 
 (defrecord Database [uri conn]
   component/Lifecycle
@@ -17,7 +27,6 @@
     (let [_    (d/create-database uri)
           conn (d/connect uri)]
       (load-schema "database/schema.edn" conn)
-      (println "Loaded schema")
       (assoc this :conn conn)))
   (stop [this]
     (d/shutdown true)))
