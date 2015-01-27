@@ -1,7 +1,9 @@
 (ns theatralia.routes
-  (:require [compojure.core :as cj]
+  (:require [com.stuartsierra.component :as component]
+            [compojure.core :as cj]
             [compojure.route :as route]
             [ring.middleware.edn :refer [wrap-edn-params]]
+            [datomic.api :as d]
             [theatralia.welcome-page :as wp]))
 
 ;;; Credits:
@@ -12,24 +14,45 @@
    :headers {"Content-Type" "application/edn"}
    :body (pr-str data)})
 
-;;; TODO: Move this to the appropriate namespace.
-(defn init []
-  (generate-response
-    {:last-input {:url "/last-input" :coll {:text "Hello World!"}}}))
+(defn last-input [conn]
+  "Returns a tuple of the ID of the entity with the :last-input/text attribute
+  and the value of that attribute."
+  (first (d/q '[:find ?e ?t :where [?e :last-input/text ?t]]
+              (d/db conn))))
 
-(defn print-and-respond [params]
-  (println (:text params))
+(defn init [conn]
+  (let [[_ text] (last-input conn)
+        default "Hello World!"]
+    (when (nil? text)
+      @(d/transact conn
+                   [[:db/add #db/id[:db.part/user] :last-input/text default]]))
+    (generate-response
+      {:last-input {:url "/last-input"
+                    :coll {:text (or text default)}}})))
+
+(defn update-last-input
+  "Takes a request map with a :text key and updates the newest entity with the
+  attribute :last-input/text."
+  [{:keys [text]} conn]
+  (let [[eid _] (last-input conn)]
+    @(d/transact conn [[:db/add eid :last-input/text text]]))
   (generate-response {:status :ok}))
 
-(cj/defroutes routes
-  (cj/GET "/" [] (wp/index))
-  (cj/GET "/init" [] (init))
-  (cj/PUT "/last-input" {params :edn-params} (print-and-respond params))
-  (cj/GET "/main.css" [] (wp/main-css))
-  (route/resources "/")
-  (route/not-found "<h1>Page not found</h1>"))
+(defn make-handler [routes]
+  (-> (let [conn (:conn (:database routes))]
+        (cj/routes
+          (cj/GET "/" [] (wp/index))
+          (cj/GET "/init" [] (init conn))
+          (cj/GET "/last-input" [] (second (last-input conn)))
+          (cj/PUT "/last-input" {params :edn-params}
+                  (update-last-input params conn))
+          (cj/GET "/main.css" [] (wp/main-css))
+          (route/resources "/")
+          (route/not-found "<h1>Page not found</h1>")))
+      wrap-edn-params))
 
-(defrecord Routes [handler])
+(defrecord Routes [database])
 
 (defn make-routes []
-  (Routes. (wrap-edn-params routes)))
+  (component/using (map->Routes {})
+                   [:database]))

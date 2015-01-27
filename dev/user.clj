@@ -1,6 +1,7 @@
 (ns user
   (:require [com.stuartsierra.component :as component]
             [clojure.repl :refer :all]
+            [clojure.pprint :refer [pprint]]
             [clojure.tools.namespace.repl :refer [refresh]]
             [theatralia.main :as main]))
 

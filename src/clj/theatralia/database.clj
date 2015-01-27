@@ -24,12 +24,13 @@
 (defrecord Database [uri conn]
   component/Lifecycle
   (start [this]
-    (let [_    (d/create-database uri)
-          conn (d/connect uri)]
+    (d/create-database uri)
+    (let [conn (d/connect uri)]
       (load-schema "database/schema.edn" conn)
       (assoc this :conn conn)))
   (stop [this]
-    (d/shutdown true)))
+    (d/shutdown false) ; Don't want to stop the REPL, therefore false.
+    (assoc this :conn nil)))
 
 (defn make-database [uri]
   (component/using (map->Database {:uri uri})

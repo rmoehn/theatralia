@@ -1,5 +1,6 @@
 (ns theatralia.web-server
   (:require [com.stuartsierra.component :as component]
+            [theatralia.routes :refer [make-handler]]
             [ring.adapter.jetty :refer [run-jetty]]))
 
 ;;; Credits:
@@ -11,10 +12,11 @@
   (start [this]
     (assoc this
            :jetty
-           (run-jetty (:handler web-app) {:port port :join? false})))
+           (run-jetty (make-handler web-app) {:port port :join? false})))
   (stop [this]
     (when jetty
-      (.stop jetty))))
+      (.stop jetty)
+      (assoc this :jetty nil))))
 
 (defn make-web-server [port]
   (component/using (map->WebServer {:port port})
