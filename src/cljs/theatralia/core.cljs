@@ -50,18 +50,17 @@
       (.focus (om/get-node owner "misc-input")))))
 
 (defn app-view [app owner]
-  (do
-    (reify
-      om/IRender
-      (render [_]
-        (om/build
-          om-sync
-          (:last-input app)
-          {:opts
-           {:view io-view
-            :filter (comp #{:update} tx-tag)
-            :on-success (fn [res tx-data] (println res))
-            :on-error (fn [err tx-data] (println (str "Error: " err)))}})))))
+  (reify
+    om/IRender
+    (render [_]
+      (om/build
+        om-sync
+        (:last-input app)
+        {:opts
+         {:view io-view
+          :filter (comp #{:update} tx-tag)
+          :on-success (fn [res tx-data] (println res))
+          :on-error (fn [err tx-data] (println (str "Error: " err)))}}))))
 
 (let [tx-chan (chan)
       tx-pub-chan (async/pub tx-chan (fn [_] :txs))]
