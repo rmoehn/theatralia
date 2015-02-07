@@ -31,8 +31,8 @@ A second thing you should know is Stuart Sierra's
 [component](https://github.com/stuartsierra/component) framework.
 Consume these:
 
- - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
- - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
+ - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q)
+ - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded
 
 ## Credits <a name="credits"></a>
 
@@ -63,7 +63,7 @@ though! Just kidding.
     a different port, you have to use that, of course.
 
 Credits:
- 
+
  - https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
  - https://github.com/weavejester/lein-ring
 
@@ -74,19 +74,30 @@ Releases (and eventually to the web server). Commits that are not tagged don't
 get deployed. I'm too lazy to write a full new version number for every version
 I want to deploy for testing, so tags will be `t<number>`.
 
-## Fonts
+## User interface design
 
-The fonts are still not under version control, because I'm waiting for the
-product owner's approval. So I don't want to litter the repo with additions and
-removals of binaries or whatever fonts are.
+Currently you can see two approaches to producing the user interface. One is the
+server-generated approach of the Welcome page with my own styling. The other is
+the client-side approach of the »Try it out« playground page with
+[Bootstrap](http://getbootstrap.com/) styling. The final design will probably be
+a mix of both. However, for now I'll do some functionality prototyping with
+vanilla Bootstrap and leave the Welcome page for reference.
 
-The fonts used are:
+### Fonts
+
+The fonts are not under version control, because I don't yet know whether
+they'll make it into the final design. So I don't want to litter the repo with
+additions and removals of binaries or whatever fonts are.
+
+The fonts used on the Welcome page are:
 
  - [Theano Didot](http://www.fontsquirrel.com/fonts/Theano-Didot) by Alexey
    Kryukov as a serif font.
  - [Chivo](http://www.omnibus-type.com/) by Omnibus Type as a sans-serif font.
- - [GFS Elpis](http://www.greekfontsociety.gr/pages/en_typefaces20th.html) by
-   Natasha Raissaki, published by the Greek Font Society for the Big Theta.
+
+The Big Theta is set in [GFS
+Elpis](http://www.greekfontsociety.gr/pages/en_typefaces20th.html) by Natasha
+Raissaki, published by the Greek Font Society.
 
 If fonts are not available as WOFF, I use the [Font
 Squirrel](http://www.fontsquirrel.com/) webfont generator for conversion and
@@ -95,7 +106,7 @@ packaging.
 Note that I'm not a font expert at all, so I welcome all suggestions for
 improvement.
 
-## Colours
+### Colours of the Welcome page
 
 Right now I'm using parts of [Solarized](http://ethanschoonover.com/solarized)
 as a colour scheme, which is easy on the eyes. The problem is that one has to
@@ -108,6 +119,20 @@ and »colour« here: I use American Englisch spelling in source code in order to
 prevent bugs, since most programmers are accustomed to American English
 spelling. Everything else is not as critical, so I stay British.)
 
+### Om, Kioo, Bootstrap
+
+I'm using Om and I'm using Bootstrap, but I'm not using [Om
+Bootstrap](http://om-bootstrap.herokuapp.com/). I found that there is a lot of
+stuff in Bootstrap that is not in Om Bootstrap and looking at how to use Om
+Bootstrap I also didn't see huge benefits in using it. So contributing the parts
+I need is out of question.
+
+Instead, since I like [Enlive](https://github.com/cgrand/enlive), I had a look
+at [Kioo](https://github.com/ckirkendall/kioo) and from what I've seen I think
+that using the trio of Om, Kioo and Bootstrap can be powerful and reasonably
+easy. There's no tutorials or anything on this combination though, so if you're
+looking for a topic for your next blog post, this might be something.
+
 ## Build system
 
 I cobbled together my `project.clj` and corresponding directory layout following
@@ -118,7 +143,7 @@ some of David Nolen's templates:
 should read [The Essence of ClojureScript
 Redux](http://swannodette.github.io/2015/01/02/the-essence-of-clojurescript-redux/)
 and [Waitin'](http://swannodette.github.io/2014/12/22/waitin/) (and maybe the Om
-tutorials).  
+tutorials).
 
 ## License
 

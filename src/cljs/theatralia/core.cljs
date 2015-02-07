@@ -37,7 +37,7 @@
 
     om/IRenderState
     (render-state [this local-state]
-      (kioo/component "public/html/bootstrap-test.html"
+      (kioo/component "templates/bootstrap-test.html"
         {[:.page-header :> :h1] (kio/content (:text last-input))
          [:#miscInput] (kioo/set-attr :value (:text local-state)
                                      :onChange #(handle-change % owner local-state)
