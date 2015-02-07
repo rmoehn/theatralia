@@ -1,8 +1,5 @@
 (ns theatralia.core
-  (:require-macros [cljs.core.async.macros :refer [go]]
-                   [kioo.core :as kioo]
-                   kioo.util
-                   )
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :as async :refer [put! chan alts!]]
             [goog.dom :as gdom]
             [om.core :as om :include-macros true]
@@ -10,11 +7,14 @@
             [om-sync.core :refer [om-sync]]
             [om-sync.util :refer [tx-tag edn-xhr]]
             [kioo.om :as kio]
-            [kioo.core :as kic]))
+            kioo.util ; so that kioo/component won't cause warnings
+            [kioo.core :as kioo :include-macros true]))
 
 ;;; Credits:
 ;;;  - https://github.com/swannodette/om
 ;;;  - https://github.com/swannodette/om/wiki/Basic-Tutorial
+;;;  - https://github.com/ckirkendall/kioo
+;;;  - https://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs
 
 (enable-console-print!)
 
@@ -39,11 +39,11 @@
     (render-state [this local-state]
       (kioo/component "public/html/bootstrap-test.html"
         {[:.page-header :> :h1] (kio/content (:text last-input))
-         [:#miscInput] (kic/set-attr :value (:text local-state)
+         [:#miscInput] (kioo/set-attr :value (:text local-state)
                                      :onChange #(handle-change % owner local-state)
                                      :onKeyDown #(when (= (.-key %) "Enter")
                                                    (process-input owner last-input)))
-         [:#submit] (kic/set-attr :onClick #(process-input owner last-input))}))
+         [:#submit] (kioo/set-attr :onClick #(process-input owner last-input))}))
 
     om/IDidMount
     (did-mount [_]
