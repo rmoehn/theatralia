@@ -1,11 +1,16 @@
 (ns theatralia.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [kioo.core :as kioo]
+                   kioo.util
+                   )
   (:require [cljs.core.async :as async :refer [put! chan alts!]]
             [goog.dom :as gdom]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [om-sync.core :refer [om-sync]]
-            [om-sync.util :refer [tx-tag edn-xhr]]))
+            [om-sync.util :refer [tx-tag edn-xhr]]
+            [kioo.om :as kio]
+            [kioo.core :as kic]))
 
 ;;; Credits:
 ;;;  - https://github.com/swannodette/om
@@ -32,18 +37,13 @@
 
     om/IRenderState
     (render-state [this local-state]
-      (dom/div nil
-        (dom/h1 nil (:text last-input))
-        (dom/input
-          #js {:type "text"
-               :ref "misc-input"
-               :value (:text local-state)
-               :onChange #(handle-change % owner local-state)
-               :onKeyDown #(when (= (.-key %) "Enter")
-                                 (process-input owner last-input))})
-        (dom/button
-          #js {:onClick #(process-input owner last-input)}
-          "Send")))
+      (kioo/component "public/html/bootstrap-test.html"
+        {[:.page-header :> :h1] (kio/content (:text last-input))
+         [:#miscInput] (kic/set-attr :value (:text local-state)
+                                     :onChange #(handle-change % owner local-state)
+                                     :onKeyDown #(when (= (.-key %) "Enter")
+                                                   (process-input owner last-input)))
+         [:#submit] (kic/set-attr :onClick #(process-input owner last-input))}))
 
     om/IDidMount
     (did-mount [_]

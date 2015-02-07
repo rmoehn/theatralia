@@ -17,6 +17,7 @@
                  [compojure "1.2.1"]
                  [garden "1.2.5"]
                  [enlive "1.1.5"]
+                 [kioo "0.4.0"]
                  [com.datomic/datomic-pro "0.9.5130"]]
 
   :node-dependencies [[source-map-support "0.2.8"]]
