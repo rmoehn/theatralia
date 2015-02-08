@@ -6,7 +6,7 @@
             [om.dom :as dom :include-macros true]
             [om-sync.core :refer [om-sync]]
             [om-sync.util :refer [tx-tag edn-xhr]]
-            [kioo.om :as kio]
+            [kioo.om :as kiom]
             kioo.util ; so that kioo/component won't cause warnings
             [kioo.core :as kioo :include-macros true]))
 
@@ -30,24 +30,33 @@
       (om/transact! last-input :text (fn [_] input) :update)
       (om/set-state! owner :text ""))))
 
-(defn io-view [last-input owner]
+(defn form-view [last-input owner]
   (reify
     om/IInitState
     (init-state [_] {:text ""})
 
     om/IRenderState
     (render-state [this local-state]
-      (kioo/component "templates/bootstrap-test.html"
-        {[:.page-header :> :h1] (kio/content (:text last-input))
-         [:#miscInput] (kioo/set-attr :value (:text local-state)
-                                     :onChange #(handle-change % owner local-state)
-                                     :onKeyDown #(when (= (.-key %) "Enter")
-                                                   (process-input owner last-input)))
-         [:#submit] (kioo/set-attr :onClick #(process-input owner last-input))}))
+      (kioo/component "templates/bootstrap-test.html" [:#test-form]
+        {[:#miscInput] (kioo/set-attr
+                         :value (:text local-state)
+                         :onChange #(handle-change % owner local-state)
+                         :onKeyDown #(when (= (.-key %) "Enter")
+                                       (process-input owner last-input)))
+         [:#submit] (kioo/set-attr
+                      :onClick #(process-input owner last-input))}))
 
     om/IDidMount
     (did-mount [_]
       (.focus (om/get-node owner "misc-input")))))
+
+(defn io-view [last-input owner]
+  (reify
+    om/IRender
+    (render [_]
+      (kioo/component "templates/bootstrap-test.html"
+        {[:.page-header :> :h1] (kiom/content (:text last-input))
+         [:#test-form] (kiom/substitute (om/build form-view last-input))}))))
 
 (defn app-view [app owner]
   (reify
