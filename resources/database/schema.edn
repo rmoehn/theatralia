@@ -1,6 +1,94 @@
 [{:db/id #db/id[:db.part/db]
-  :db/ident :last-input/text
-  :db/index true
+  :db/ident :part/userdata
+  :db/doc "partition for storing data about users like username, email etc."
+  :db.install/_partition :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/doc "partition for storing all the bibliography data like materials, entities etc."
+  :db/ident :part/bibliography
+  :db.install/_partition :db.part/db}]
+
+[{:db/id #db/id [:db.part/db]
+  :db/ident :user/name
+  :db/doc "the user's real name"
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
+  :db/index true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :user/username
+  :db/doc "the user's user name"
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/index true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :user/email
+  :db/doc "thea user's email address"
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  ; not unique, since that would prevent users from having multiple accounts
+  :db/index true
+  :db.install/_attribute :db.part/db}]
+
+[{:db/id #db/id [:db.part/db]
+  :db/ident :material/title
+  :db/doc "the title the owner has given to this material"
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/index true
+  :db/fulltext true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :material/uri
+  :db/doc "a URI indicating where this material can be accessed"
+  :db/valueType :db.type/uri
+  :db/cardinality :db.cardinality/one
+  :db/index true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :material/comments
+  :db/doc "free text the owner wants to annotate this material with"
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/index true
+  :db/fulltext true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :material/owner
+  :db/doc "the user who created this material"
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/index true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :material/tags
+  :db/doc "the tags the owner associated with this material"
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/index true
+  :db.install/_attribute :db.part/db}]
+
+[{:db/id #db/id [:db.part/db]
+  :db/ident :tag/text
+  :db/doc "the text/name/title (?) of this tag"
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/index true
+  :db/fulltext true
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id [:db.part/db]
+  :db/ident :tag/owner
+  :db/doc "the user who created this tag; tags belong to users just like materials"
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/index true
   :db.install/_attribute :db.part/db}]

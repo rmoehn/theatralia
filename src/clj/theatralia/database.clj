@@ -4,8 +4,11 @@
             [datomic.api :as d :refer [q db]])
   (:import datomic.Util))
 
+;;; Credits:
+;;;  - https://github.com/swannodette/om-async-tut/blob/master/src/leiningen/new/om_async_tut/server_util.clj
+
 (defn- no-schema-loaded? [conn]
-  (empty? (q '[:find ?e :where [?e :db/ident :last-input/text]]
+  (empty? (q '[:find ?e :where [?e :db/ident :user/username]]
              (db conn))))
 
 (defn- load-schema
@@ -17,7 +20,7 @@
                    io/resource
                    io/reader
                    Util/readAll
-                   first
+                   (apply concat)
                    (d/transact conn))]
          @fut)))
 
