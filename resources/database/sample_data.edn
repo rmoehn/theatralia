@@ -1,0 +1,55 @@
+[{:db/id #db/id[:part/userdata -1]
+  :user/name "Sandbox"
+  :user/username "sandbox"
+  :user/email "theatralia-sandbox@example.org"}
+
+ {:db/id #db/id[:part/bibliography -12]
+  :tag/text "cooking"
+  :tag/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography -13]
+  :tag/text "science"
+  :tag/owner #db/id[:part/userdata -1]}
+ 
+ {:db/id #db/id[:part/bibliography -14]
+  :tag/text "recipes"
+  :tag/owner #db/id[:part/userdata -1]}
+ 
+ {:db/id #db/id[:part/bibliography -15]
+  :tag/text "meat-free"
+  :tag/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography -16]
+  :tag/text "word"
+  :tag/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography -17]
+  :tag/text "origin: latin"
+  :tag/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography]
+  :material/title "On Food and Cooking"
+  :material/uri #theatralia/uri "http://curiouscook.typepad.com/site/on-food-and-cooking.html"
+  :material/comments "Excellent resource. Mostly about the science of cooking.
+                      Very few concrete recipes. Fun to read. Makes you hungry."
+  :material/tags [#db/id[:part/bibliography -12] #db/id[:part/bibliography -13]]
+  :material/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography]
+  :material/title "River Cottage Veg Every Day!"
+  :material/uri #theatralia/uri "http://www.bloomsbury.com/au/river-cottage-veg-every-day-9781408812129"
+  :material/comments "Nice recipes. Easy to make. No hard-to-get ingredients."
+  :material/tags [#db/id[:part/bibliography -12] #db/id[:part/bibliography -14] #db/id[:part/bibliography -15]]
+  :material/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography]
+  :material/title "The Food Chain: The Case Against Meat"
+  :material/uri #theatralia/uri "http://www.bbc.co.uk/programmes/p02dk0tl"
+  :material/tags #db/id[:part/bibliography -15]
+  :material/owner #db/id[:part/userdata -1]}
+
+ {:db/id #db/id[:part/bibliography]
+  :material/uri #theatralia/uri "https://en.wiktionary.org/wiki/river"
+  :material/comments "River ate a big piece of cheese."
+  :material/tags [#db/id[:part/bibliography -16] #db/id[:part/bibliography -17]]
+  :material/owner #db/id[:part/userdata -1]}]
