@@ -28,6 +28,28 @@ Credits:
       </ol>
     </div>
 
+    <div id="add-material-form" class="row">
+      <form accept-charset="UTF-8" action="/materials" method="POST">
+        <div class="form-group">
+          <label for="newMatTitle">Title</label>
+          <input ref="title" class="form-control" id="newMatTitle" placeholder="Sourdough Technology—A Traditional Way for Wholesome Foods: A Review">
+        </div>
+        <div class="form-group">
+          <label for="newMatURI">Link</label>
+          <input ref="url" type="url" class="form-control" id="newMatURI" placeholder="http://onlinelibrary.wiley.com/doi/10.1111/j.1541-4337.2011.00148.x/pdf">
+        </div>
+        <div class="form-group">
+          <label for="newMatTags">Tags</label>
+          <input ref="tags" type="text" class="form-control" id="newMatTags" placeholder="Baking, Sourdough, Microbiology">
+        </div>
+        <div class="form-group">
+          <label for="newMatComments">Comments</label>
+          <textarea ref="comments" class="form-control" id="newMatComments" rows="5">
+        </div>
+        <button id="newMatSubmit" type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
   </div>
 </body>
 </html>

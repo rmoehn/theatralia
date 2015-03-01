@@ -27,6 +27,9 @@
         (cj/routes
           (cj/GET "/" [] (wp/index))
           (cj/GET "/gq/:s" [s] (search-for conn s))
+          (cj/POST "/materials" {params :edn-params}
+                                (do (println params)
+                                    (generate-response {:ok :ok})))
           (cj/GET "/main.css" [] (wp/main-css))
           (route/resources "/")
           (route/not-found "<h1>Page not found</h1>")))

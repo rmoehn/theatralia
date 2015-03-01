@@ -45,6 +45,22 @@
                                (om/transact! (search-result) #(vec res)))
                 :on-error print-error}))))
 
+(defn search-view [_ owner]
+  (reify
+    om/IInitState
+    (init-state [_] {:text ""})
+
+    om/IRenderState
+    (render-state [this local-state]
+      (kioo/component "templates/sandbox.html" [:#search-field]
+        {[:#searchInput] (kioo/set-attr
+                           :value (:text local-state)
+                           :onChange #(handle-change % :text owner)
+                           :onKeyDown #(when (= (.-key %) "Enter")
+                                         (process-input owner)))
+         [:#submit] (kioo/set-attr
+                      :onClick #(process-input owner))}))))
+
 ;;;; Result part of search
 
 (defn result-item [[id title score] owner]
@@ -61,21 +77,35 @@
         (kioo/component "templates/sandbox.html" [:#search-results]
           {[:ol] (kioo/content (om/build-all result-item rs))})))))
 
-(defn search-view [_ owner]
+;;;; Adding new materials
+
+(defn process-new-material [form-state owner]
+  (edn-xhr {:method :post
+            :url "/materials"
+            :data form-state
+            :on-complete #(om/update-state! owner (constantly {}))
+            :on-error print-error}))
+
+(defn bind-to [form-state owner]
+  (fn [node]
+    (let [kw (keyword (get-in node [:attrs :ref]))]
+      ((kioo/set-attr :value (get form-state kw "")
+                      :onChange #(handle-change % kw owner))
+       node))))
+
+(defn add-material-view [_ owner]
   (reify
     om/IInitState
-    (init-state [_] {:text ""})
+    (init-state [this] {})
 
     om/IRenderState
-    (render-state [this local-state]
-      (kioo/component "templates/sandbox.html" [:#search-field]
-        {[:#searchInput] (kioo/set-attr
-                           :value (:text local-state)
-                           :onChange #(handle-change % owner local-state)
-                           :onKeyDown #(when (= (.-key %) "Enter")
-                                         (process-input owner)))
-         [:#submit] (kioo/set-attr
-                      :onClick #(process-input owner))})))
+    (render-state [this form-state]
+      (kioo/component "templates/sandbox.html" [:#add-material-form]
+        {[:#newMatSubmit] (kioo/set-attr
+                            :onClick (fn [e]
+                                       (.preventDefault e)
+                                       (process-new-material form-state owner)))
+         [:.form-control] (bind-to form-state owner)}))))
 
 ;;;; Wiring everything together
 
@@ -88,7 +118,10 @@
          (kioo/substitute (om/build search-view nil))
 
          [:#search-results]
-         (kioo/substitute (om/build result-view nil))}))))
+         (kioo/substitute (om/build result-view nil))
+
+         [:#add-material-form]
+         (kioo/substitute (om/build add-material-view nil))}))))
 
 (defn app-view [app owner]
   (reify
