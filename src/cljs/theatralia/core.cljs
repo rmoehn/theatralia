@@ -16,7 +16,17 @@
 ;;;  - https://github.com/ckirkendall/kioo
 ;;;  - https://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs
 
+;;;; Some utilities
+
 (enable-console-print!)
+
+(defn print-error [{:keys [error]}]
+  (println "Error:" error))
+
+(defn handle-change [event kw owner]
+  (om/set-state! owner kw (.. event -target -value)))
+
+;;;; App state and its API
 
 (def app-state
   (atom {:search-result []}))
@@ -24,8 +34,7 @@
 (defn search-result []
   (om/ref-cursor (:search-result (om/root-cursor app-state))))
 
-(defn handle-change [event owner {:keys [text]}]
-  (om/set-state! owner :text (.. event -target -value)))
+;;;; Input field part of search
 
 (defn process-input [owner]
   (let [input (.-value (om/get-node owner "search-input"))]
@@ -34,7 +43,9 @@
                 :url (str "/gq/" input)
                 :on-complete (fn [res]
                                (om/transact! (search-result) #(vec res)))
-                :on-error (fn [{:keys [error]}] (println "Error:" error))}))))
+                :on-error print-error}))))
+
+;;;; Result part of search
 
 (defn result-item [[id title score] owner]
   (om/component
@@ -64,11 +75,9 @@
                            :onKeyDown #(when (= (.-key %) "Enter")
                                          (process-input owner)))
          [:#submit] (kioo/set-attr
-                      :onClick #(process-input owner))}))
+                      :onClick #(process-input owner))})))
 
-    om/IDidMount
-    (did-mount [_]
-      (.focus (om/get-node owner "search-input")))))
+;;;; Wiring everything together
 
 (defn sandbox-view [_ owner]
   (reify
