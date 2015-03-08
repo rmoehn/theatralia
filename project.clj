@@ -8,6 +8,7 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2913"]
+                 [medley "0.5.5"]
                  [com.stuartsierra/component "0.2.2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-rc1"]

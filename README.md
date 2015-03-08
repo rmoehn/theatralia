@@ -145,6 +145,18 @@ Redux](http://swannodette.github.io/2015/01/02/the-essence-of-clojurescript-redu
 and [Waitin'](http://swannodette.github.io/2014/12/22/waitin/) (and maybe the Om
 tutorials).
 
+## ->LIVE-SPEC
+
+Recently (use `git blame` to see when I wrote this) I listened to the [Cognicast
+with Aaron Brooks](http://blog.cognitect.com/cognicast/074) as a guest. He
+talked about the concept of live specifications, which I found interesting. He
+said that there are actually very few projects that wouldn't benefit from it.
+While I won't jump on the idea immediately with this project, I will be making
+`->LIVE-SPEC` annotations whenever I write something that would be better off
+coming from such a live specification rather than being hard-coded. Of course a
+first step could also be putting these things in a configuration file or
+something similar.
+
 ## License
 
 The MIT License (MIT)
