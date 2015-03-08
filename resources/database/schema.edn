@@ -1,3 +1,5 @@
+;;;; Install partitions
+
 [{:db/id #db/id[:db.part/db]
   :db/ident :part/userdata
   :db/doc "partition for storing data about users like username, email etc."
@@ -7,6 +9,8 @@
   :db/doc "partition for storing all the bibliography data like materials, entities etc."
   :db/ident :part/bibliography
   :db.install/_partition :db.part/db}]
+
+;;;; Entity user
 
 [{:db/id #db/id [:db.part/db]
   :db/ident :user/name
@@ -33,6 +37,8 @@
   ; not unique, since that would prevent users from having multiple accounts
   :db/index true
   :db.install/_attribute :db.part/db}]
+
+;;;; Entity material
 
 [{:db/id #db/id [:db.part/db]
   :db/ident :material/title
@@ -75,6 +81,8 @@
   :db/cardinality :db.cardinality/many
   :db/index true
   :db.install/_attribute :db.part/db}]
+
+;;;; Entity tag
 
 [{:db/id #db/id [:db.part/db]
   :db/ident :tag/text

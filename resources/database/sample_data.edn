@@ -1,7 +1,12 @@
-[{:db/id #db/id[:part/userdata -1]
+[
+;;;; Add user sandbox
+
+ {:db/id #db/id[:part/userdata -1]
   :user/name "Sandbox"
   :user/username "sandbox"
   :user/email "theatralia-sandbox@example.org"}
+
+;;;; Add sample tags
 
  {:db/id #db/id[:part/bibliography -12]
   :tag/text "cooking"
@@ -26,6 +31,8 @@
  {:db/id #db/id[:part/bibliography -17]
   :tag/text "origin: latin"
   :tag/owner #db/id[:part/userdata -1]}
+
+;;;; Add sample materials
 
  {:db/id #db/id[:part/bibliography]
   :material/title "On Food and Cooking"
