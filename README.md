@@ -31,8 +31,8 @@ A second thing you should know is Stuart Sierra's
 [component](https://github.com/stuartsierra/component) framework.
 Consume these:
 
- - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q) 
- - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
+ - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q)
+ - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded
 
 ## Credits <a name="credits"></a>
 
@@ -63,7 +63,7 @@ though! Just kidding.
     a different port, you have to use that, of course.
 
 Credits:
- 
+
  - https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
  - https://github.com/weavejester/lein-ring
 
@@ -118,13 +118,13 @@ some of David Nolen's templates:
 should read [The Essence of ClojureScript
 Redux](http://swannodette.github.io/2015/01/02/the-essence-of-clojurescript-redux/)
 and [Waitin'](http://swannodette.github.io/2014/12/22/waitin/) (and maybe the Om
-tutorials).  
+tutorials).
 
 ## License
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Richard Möhn
+Copyright (c) 2014, 2015 Richard Möhn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
