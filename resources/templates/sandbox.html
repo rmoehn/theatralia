@@ -13,7 +13,7 @@ Credits:
     <div id="search-field" class="row">
       <div class="col-lg-6">
         <div class="input-group">
-          <input id="searchInput" ref="search-input" type="search" class="form-control" placeholder="Search for..." autofocus>
+          <input id="searchInput" ref="search-input" type="search" class="form-control" placeholder="Search for..." autofocus=autofocus formenctype="application/x-www-form-urlencoded">
           <span class="input-group-btn">
             <button id="submit" class="btn btn-default" type="button">Go!</button>
           </span>
@@ -44,7 +44,7 @@ Credits:
         </div>
         <div class="form-group">
           <label for="newMatComments">Comments</label>
-          <textarea ref="comments" class="form-control" id="newMatComments" rows="5">
+          <textarea ref="comments" class="form-control" id="newMatComments" rows="5" placeholder="Excellent resource for taking charge of your sourdough. You'll need a thermometer, though."></textarea>
         </div>
         <button id="newMatSubmit" type="submit" class="btn btn-default">Save</button>
       </form>
