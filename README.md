@@ -2,9 +2,13 @@
 
 # theatralia
 
+This application is under development and not usable yet. If you're interested
+in collaborating, read the documentation (which is becoming quite extensive) and
+contact me.
+
 The project uses [Midje](https://github.com/marick/Midje/).
 
-## How to run the tests
+## How to run the tests (introduced by template)
 
 `lein midje` will run all tests.
 
@@ -13,6 +17,15 @@ The project uses [Midje](https://github.com/marick/Midje/).
 `lein midje :autotest` will run all the tests indefinitely. It sets up a
 watcher on the code files. If they change, only the relevant tests will be
 run again.
+
+## Documentation overview
+
+ 1. This README. Lots of different things I wrote down when they came to my
+    mind. Provides you with some context. Might be cleaned up in the future.
+ 2. Comments and doc strings in the source code. At the moment rather sparse,
+    but get beefed up whenever a region of the code becomes reasonably stable.
+ 3. Commit log. I am a fan of informative commit messages, so you will see many
+    of my thoughts and decisions documented there.
 
 ## Notes from the start
 
@@ -54,6 +67,8 @@ if you don't already have Datomic Pro Starter Edition. You should go and get it,
 though! Just kidding.
 
 ## How to test on a local Tomcat
+
+This doesn't work at the moment, but will be fixed sometime.
 
  1. Run `lein ring uberwar`.
  2. Copy `target/theatralia.war` to your Tomcat's webapps directory, probably
