@@ -18,9 +18,12 @@ and the client running in the browser.
 +----------+
      ↓↑
 +----------+   +----------+
-| Server   | ⇄ | Database |
+|  Server  | ⇄ | Database |
 +----------+   +----------+
 ```
+
+See the [bottom](#the-components-of-the-server) of the file for a description of
+how the server is again divided into multiple parts.
 
 In the following I will narrate what is going on when you do various things in
 the browser. (Note that I'm not completely sure about what some parts are doing,
@@ -94,3 +97,32 @@ lot of server-generated things.
      locally, so the server sends it to the browser.
  12. The browser receives the font files and re-renders the page with the
      correct font. (Exact behaviour might vary.)
+
+## The components of the server
+
+The server consist of several parts, which I call components, since they
+are taken care of by the framework
+[Component](https://github.com/stuartsierra/component). See the links in
+[README](https://github.com/rmoehn/theatralia#notes-from-the-start) for more
+detailed information.
+
+Currently we have three components. One is the Jetty HTTP server running inside
+the server process. It is defined in
+[src/clj/theatralia/web_server.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/web_server.clj).
+One takes care of the connection to the database. It is defined in
+[src/clj/theatralia/database.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/thea)
+The third is a static component for routing. See
+[src/clj/theatralia/routes.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/routes.clj).
+
+For starting and stopping the server during development you run `(go)` and
+`(stop)` at the REPL. These are defined in
+[dev/user.clj](https://github.com/rmoehn/theatralia/blob/master/dev/user.clj).
+`(start)` starts the components in the right order (taking care of dependencies
+between components). It first turns on the database component, which sets up the
+connection to our Datomic transactor and does further setup steps if necessary.
+It creates the routing componentm, providing it with access to the database
+component. Finally it switches on the Jetty HTTP server, giving it a reference
+to the routing component. `(stop)` stops the components in the reverse order.
+
+If you have changed some code, you use `(reset)` to stop the system, reload
+everything that has changed in a proper way and start it again.

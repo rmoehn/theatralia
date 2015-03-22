@@ -47,7 +47,8 @@ important.
 
  1. Start the Datomic transactor with the dev storage protocol as described
     [here](http://docs.datomic.com/getting-started.html#dev-storage).
- 2. Start automatic ClojureScript compilation.
+ 2. Start automatic ClojureScript compilation (see
+    [below](#automatic-clojurescript-compilation)).
 
     ```
     $ lein cljsbuild auto dev
@@ -55,8 +56,9 @@ important.
     ...
     ```
 
- 3. Launch the REPL and do the `(go)`. You might have to type in your PGP
-    password first.
+ 3. Launch the REPL and do the `(go)` (see the [system
+    overview](https://github.com/rmoehn/theatralia/blob/master/doc/system_overview.clj#the-components-of-the-server)).
+    You might have to type in your PGP password first.
 
     ```
     $ lein repl
@@ -85,3 +87,12 @@ clean way:
 
  2. Kill or `Strg-C` the automatic ClojureScript compilation and the Datomic
     transactor.
+
+## Automatic ClojureScript compilation
+
+The ClojureScript compiler has a mode where it watches your ClojureScript source
+files and automatically compiles them to JavaScript whenever you save a change.
+There are some notes in the
+[README](https://github.com/rmoehn/theatralia#build-system) on how I set this
+up. You might also want to read the ClojureScript [Quick Start
+Guide](https://github.com/clojure/clojurescript/wiki/Quick-Start).
