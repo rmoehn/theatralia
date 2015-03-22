@@ -16,10 +16,12 @@ I will probably switch to using Bootstrap sources sometime and then I'll have to
 add it as a submodule. Maybe I'll do that soon. I don't know. For now you'll
 have to download it manually.
 
-  $ cd resources/public
-  $ wget https://github.com/twbs/bootstrap/releases/download/v3.3.4/bootstrap-3.3.4-dist.zip
-  $ unzip bootstrap-3.3.4-dist.zip
-  $ mv bootstrap-3.3.4-dist bootstrap
+```
+$ cd resources/public
+$ wget https://github.com/twbs/bootstrap/releases/download/v3.3.4/bootstrap-3.3.4-dist.zip
+$ unzip bootstrap-3.3.4-dist.zip
+$ mv bootstrap-3.3.4-dist bootstrap
+```
 
 ### Fonts
 
@@ -47,17 +49,21 @@ important.
     [here](http://docs.datomic.com/getting-started.html#dev-storage).
  2. Start automatic ClojureScript compilation.
 
-      $ lein cljsbuild auto dev
-      Compiling ClojureScript.
-      ...
+    ```
+    $ lein cljsbuild auto dev
+    Compiling ClojureScript.
+    ...
+    ```
 
  3. Launch the REPL and do the `(go)`. You might have to type in your PGP
     password first.
 
-      $ lein repl
-      user=> (go)
-      #<SystemMap>
-      user=>
+    ```
+    $ lein repl
+    user=> (go)
+    #<SystemMap>
+    user=>
+    ```
 
     That's it. The system is running.
  4. Go to http://localhost:17777/ and you'll see the welcome page.
@@ -69,11 +75,13 @@ clean way:
 
  1. At the REPL:
 
-      user=> (stop)
-      #<SystemMap>
-      user=> (quit)
-      Bye for now!
-      $
+    ```
+    user=> (stop)
+    #<SystemMap>
+    user=> (quit)
+    Bye for now!
+    $
+    ```
 
  2. Kill or `Strg-C` the automatic ClojureScript compilation and the Datomic
     transactor.
