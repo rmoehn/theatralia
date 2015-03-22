@@ -26,6 +26,10 @@ run again.
     but get beefed up whenever a region of the code becomes reasonably stable.
  3. Commit log. I am a fan of informative commit messages, so you will see many
     of my thoughts and decisions documented there.
+ 3. [doc/running.md](https://github.com/rmoehn/theatralia/blob/master/doc/running.md)
+    – Shows how to start the system for development.
+ 4. [doc/system-overview.md](https://github.com/rmoehn/theatralia/blob/master/doc/system-overview.md)
+    – To be written.
 
 ## Notes from the start
 
@@ -174,15 +178,15 @@ something similar.
 
 ## License
 
-See `LICENSE.txt`.
+See [LICENSE.txt](https://github.com/rmoehn/theatralia/blob/master/LICENSE.txt).
 
 ### Exceptions
 
 The contents of the following directories are not my work and remain under
 their original authorship and license.
 
- - `resources/public/fonts`
- - `resources/public/bootstrap`
+ - [resources/public/fonts](https://github.com/rmoehn/theatralia/tree/master/resources/public/fonts)
+ - [resources/public/bootstrap](https://github.com/rmoehn/theatralia/tree/master/resources/public/bootstrap)
 
 They usually contain their own copyright and license information and, as of now,
 they are not under version control anyway.
