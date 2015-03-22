@@ -18,7 +18,7 @@
                  [compojure "1.2.1"]
                  [garden "1.2.5"]
                  [enlive "1.1.5"]
-                 [kioo "0.4.1-SNAPSHOT"]
+                 [kioo "0.4.1-20150314.121103-8" :exclusions [org.clojure/clojure]]
                  [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]]
 
   :node-dependencies [[source-map-support "0.2.8"]]
