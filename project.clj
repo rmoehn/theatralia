@@ -1,7 +1,10 @@
 (defproject theatralia "0.0.1-SNAPSHOT"
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
-  :description "Cool new project to do things and stuff"
+  :description "A research notebook web application"
+  :url "https://github.com/rmoehn/theatralia"
+  :license {:name "MIT License"
+            :url "http://opensource.org/licenses/MIT"}
 
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :creds :gpg}}
