@@ -4,4 +4,6 @@ target
 .repl
 resources/public/js
 resources/public/fonts
+resources/public/bootstrap
+*-init.clj
 node_modules
