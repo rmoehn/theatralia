@@ -1,4 +1,9 @@
 (ns theatralia.core
+  "All we have of the client right now.
+
+  Defines an application with a part for searching and a part for adding
+  materials. Installs it in the HTML element with ID \"app\" on the page where
+  it is loaded."
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :as async :refer [put! chan alts!]]
             [goog.dom :as gdom]

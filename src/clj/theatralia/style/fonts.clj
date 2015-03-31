@@ -1,4 +1,5 @@
 (ns theatralia.style.fonts
+  "Weird functions for putting together font loaders for Garden CSS."
   (:require [clojure.string :as string]
             [garden.stylesheet :refer [at-font-face]]))
 

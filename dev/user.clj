@@ -1,4 +1,10 @@
 (ns user
+  "This is the place where you start your REPLing. Anything defined or required
+  in this namespace will be available at the REPL from startup. Therefore the
+  functions for starting and stopping the system are situated here.
+
+  While experimenting I usually also define various things at the bottom of this
+  file, but don't check them into version control."
   (:require [com.stuartsierra.component :as component]
             [clojure.repl :refer :all]
             [clojure.pprint :refer [pprint]]

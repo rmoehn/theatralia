@@ -1,4 +1,12 @@
 (ns theatralia.main
+  "Assembles systems for various uses. For development at the REPL we have
+  (make-system). The other things are needed by the Leiningen Ring plugin for
+  creating a WAR file that can be fed into Tomcat, for example. See the :ring
+  section in project.clj.
+
+  Note that at the moment I'm not sure anymore how all this works. I'll have to
+  look into it again when I set up continuous integration and perhaps automatic
+  deployment."
   (:require [com.stuartsierra.component :as component]
             [theatralia.database :refer [make-database]]
             [theatralia.web-server :refer [make-web-server]]

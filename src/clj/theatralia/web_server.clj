@@ -1,4 +1,5 @@
 (ns theatralia.web-server
+  "Defines the component for controlling the built-in webserver."
   (:require [com.stuartsierra.component :as component]
             [theatralia.routes :refer [make-handler]]
             [ring.adapter.jetty :refer [run-jetty]]))

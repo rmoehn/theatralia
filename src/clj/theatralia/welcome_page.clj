@@ -1,4 +1,6 @@
 (ns theatralia.welcome-page
+  "Functions for assembling the Welcome page with Enlive templating and Garden
+  CSS."
   (:require [net.cgrand.enlive-html :as html]
             [garden.core :refer [css]]
             [garden.units :as u]

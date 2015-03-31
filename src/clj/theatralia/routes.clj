@@ -1,4 +1,14 @@
 (ns theatralia.routes
+  "Defines the component for handling requests to the server. This component is
+  constant, i. e. it cannot be started or stopped.
+
+  Due to experimentation this is structured in a slightly strange way. The code
+  for generating the server side HTML from the early stages of this project is
+  sitting neatly in its own namespaces. The code for handling REST requests from
+  the client application is lying around here.
+
+  I expect everything that is not concerned with routing to be gradually
+  extracted to other namespaces."
   (:require [com.stuartsierra.component :as component]
             [compojure.core :as cj]
             [compojure.route :as route]

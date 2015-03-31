@@ -1,4 +1,8 @@
 (ns theatralia.database
+  "Defines the component for taking care of the connection to the database.
+
+  Also ensures that all data that are required for the system to operate are
+  loaded into the database."
   (:require [com.stuartsierra.component :as component]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
