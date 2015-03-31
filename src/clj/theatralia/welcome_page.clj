@@ -15,6 +15,8 @@
 ;;;  - http://stackoverflow.com/questions/1676891/mapping-a-function-on-the-values-of-a-map-in-clojure
 ;;;  - http://philipwalton.github.io/solved-by-flexbox/
 
+;;;; Assembling HTML from templates
+
 (def ^:private main-html (io/resource "templates/around.html"))
 (def ^:private welcome-html (io/resource "templates/welcome.html"))
 
@@ -33,6 +35,8 @@
   [:title] (html/content "Welcome to Theatralia!")
   [:#main-content] (html/content (welcome-snippet))
   [:#global-tools] (html/content (login-snippet)))
+
+;;;; Assembling CSS from data structures.
 
 ;;; The colours come from Ethan Schoonover's Solarized theme:
 ;;; http://ethanschoonover.com/solarized
@@ -55,6 +59,7 @@
    :cyan      [ 42 161 152]
    :green     [133 153   0]})
 
+;; TODO: Use medley.core/map-vals.
 (defn- map-vals [f m]
   (zipmap (keys m) (map f (vals m))))
 

@@ -1,6 +1,8 @@
 (defproject theatralia "0.0.1-SNAPSHOT"
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
+  ;; Umm, maybe I should read this stuff about semantic versioning, though.
+  ;; TODO: Read about semantic versioning.
   :description "A research notebook web application"
   :url "https://github.com/rmoehn/theatralia"
   :license {:name "MIT License"

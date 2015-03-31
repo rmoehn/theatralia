@@ -26,6 +26,8 @@
   (fn [req]
     (handler (assoc req ::system system))))
 
+;; FIXME: (make-routes) doesn't return anything that contains a mapping for
+;;        :handler.
 (def production-handler
   (wrap-system (:handler (make-routes)) production-system))
 

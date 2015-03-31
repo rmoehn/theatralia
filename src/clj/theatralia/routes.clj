@@ -11,10 +11,14 @@
 ;;; Credits:
 ;;;  - https://github.com/weavejester/compojure/
 
+;;;; Utilities for request handling
+
 (defn generate-response [data & [status]]
   {:status (or status 200)
    :headers {"Content-Type" "application/edn"}
    :body (pr-str data)})
+
+;;;; Handler for searching materials
 
 (defn search-for [conn s]
   (generate-response
@@ -24,6 +28,8 @@
                     :where [(fulltext $ :material/title ?s) [[?e ?t _ ?sc]]]]
                   (d/db conn) s))))
 
+;;;; Utilities for adding materials
+
 (defn invert [s]
   (map - s))
 
@@ -32,6 +38,8 @@
     (mapv (fn [n]
             (map #(nth % n) s))
           (range tuple-size))))
+
+;;;; Database stuff for adding materials
 
 (defn get-present-tags [conn tags owner-eid]
   (let [tags-s (set tags)]
@@ -79,14 +87,21 @@
           (generate-response "Transaction failed" 500))))
     (generate-response :ok))) ; ->LIVE-SPEC
 
+;;;; The actual component
+
 (defn make-handler [routes]
   (-> (let [conn (:conn (:database routes))]
         (cj/routes
+          ;; Old server-side stuff
           (cj/GET "/" [] (wp/index))
+          (cj/GET "/main.css" [] (wp/main-css))
+
+          ;; REST (?) interface for client-side application
           (cj/GET "/gq/:s" [s] (search-for conn s))
           (cj/POST "/materials" {new-material :edn-params}
                                 (save-material conn new-material))
-          (cj/GET "/main.css" [] (wp/main-css))
+
+          ;; Fallback handlers
           (route/resources "/")
           (route/not-found "<h1>Page not found</h1>")))
       wrap-edn-params))

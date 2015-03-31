@@ -9,10 +9,7 @@
 ;;; Credits:
 ;;;  - https://github.com/swannodette/om-async-tut/blob/master/src/leiningen/new/om_async_tut/server_util.clj
 
-(def ^:private schema-query '[:find ?e :where [?e :db/ident :user/username]])
-
-(def ^:private sample-data-query
-  '[:find ?e :where [?e :material/title "On Food and Cooking"]])
+;;;; Utilities for data loading
 
 (defn- transact-from-resource
   "Reads the data from the given resource and transacts them over the given
@@ -31,6 +28,15 @@
   [query resource conn]
   (when (empty? (q query (db conn)))
     (transact-from-resource resource conn)))
+
+;;;; Queries that determine whether certain data has been loaded before
+
+(def ^:private schema-query '[:find ?e :where [?e :db/ident :user/username]])
+
+(def ^:private sample-data-query
+  '[:find ?e :where [?e :material/title "On Food and Cooking"]])
+
+;;;; The actual component
 
 (defrecord Database [uri conn]
   component/Lifecycle
