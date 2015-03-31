@@ -260,6 +260,42 @@ This picks up where the last section ended.
      for every item in the `:search-result` part, so that they get displayed to
      you.
 
+### Adding a material
+
+This is similar to the [previous](#doing-a-search) section in that we have the
+ClojureScript client actively communicating with the server. However, this time
+we're doing a POST request and the server modifies the database.
+
+ 1. You type "Jane Grigson: English Food" into the title input field. You type
+    "No pictures, but great recipes!" into the comment input field. The local
+    state of the `add-material-view` gets updated (see [above](#doing-a-search))
+    and now looks like this:
+
+    ```
+    {:title "Jane Grigson: English Food"
+     :comments "No pictures, but great recipes!"}
+    ```
+
+ 2. You click the submit button for adding materials. The `onClick` listener
+    fires and calls `process-new-material`.
+
+ 3. `process-new-material` takes the local state and sends it to the server in a
+    POST request to `/materials`.
+
+ 4. The server receives the request with the data encoded as an EDN string. It
+    extracts them and gives them to `save-material`.
+
+ 5. `save-material` calls some functions with the given material to construct a
+    data structure that describes the transaction for adding the material. It
+    tries to make the database execute this transaction. Depending on the result
+    of the transaction, it signals OK or an error back to the client.
+
+ 6. If the client receives an error message from the server, it just prints it
+    and leaves the text you wrote in the input fields. If the client receives an
+    OK, it empties the local state of the `add-material-view`, causing the input
+    fields in the user interface to be emptied as well. Now your new material is
+    saved in the database and can be requested through the search.
+
 ## The components of the server
 
 The server consist of several parts, which I call components, since they
