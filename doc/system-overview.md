@@ -25,12 +25,14 @@ and the client running in the browser.
 See the [bottom](#the-components-of-the-server) of the file for a description of
 how the server is again divided into multiple parts.
 
+## System stories
+
 In the following I will narrate what is going on when you do various things in
 the browser. (Note that I'm not completely sure about what some parts are doing,
 so if you find something wrong, please tell me. Also I describe everything as if
 it happened in real time. For macros this isn't true, of course.)
 
-## Visiting the Theatralia welcome page
+### Visiting the Theatralia welcome page
 
 The welcome page is a relict from my early experimentations, so it involves a
 lot of server-generated things.
@@ -110,7 +112,7 @@ lot of server-generated things.
  12. The browser receives the font files and re-renders the page with the
      correct font. (Exact behaviour might vary.)
 
-## Visiting the sandbox
+### Visiting the sandbox
 
 The sandbox is generated entirely on the client side and communicates with the
 server through XML HTTP requests (XHR). If you haven't read the [previous
@@ -197,7 +199,7 @@ story](#visiting-the-theatralia-welcome-page), do it before you start with this.
 
  11. The rest of the user interface is constructed in a similar way.
 
-## Doing a search
+### Doing a search
 
 This picks up where the last section ended.
 
