@@ -186,6 +186,67 @@ story](#visiting-the-theatralia-welcome-page), do it before you start with this.
 
  11. The rest of the user interface is constructed in a similar way.
 
+## Doing a search
+
+This picks up where the last section ended.
+
+ 1. You've loaded the sandbox. You click on the search input field. (It might
+    have been active before.) You hit `f`.
+
+ 2. The `onChange` listener of the `searchInput` element fires. It calls
+    `handle-change` with the event, the key `:text` and the component owning the
+    `searchInput` element.
+
+ 3. `handle-change` sets the value of the local state of the owning component at
+    `:text` to the value of the input element. The local state now is `{:text
+    "f"}`.
+
+ 4. Since `set-state!` triggers a re-render, `search-view`'s `render-state` is
+    called again. We set the `value` attribute of the `searchInput` element to
+    `(:text local-state)`, so the `f` you typed appears in the input field.
+
+ 5. You continue typing `o`, `o`, `d` and behind the scenes the local state is
+    changed to `{:text "food"}` in the same way as described for the first
+    letter..
+
+ 6. You hit `Enter`. The `onKeyDown` handler of the `searchInput` element fires
+    and calls `process-input` with the owning component as an argument.
+
+ 7. `process-input` reads the current value of the input field, which is »food«,
+    and sends an XML HTTP request of
+
+    ```
+    GET /gq/food
+    ```
+
+    to the server. »gq« stands for »general query«.
+
+ 8. `make-handler` does have a route for `/gq/`. It extracts the text passed
+    in the second component of the path and calls `theatralia.routes/search-for`
+    with this text and a reference to the database connection as arguments.
+
+ 9. `search-for` asks the database to perform a fulltext search on the material
+    titles for »food«. We're using Datomic, so the query is formulated as
+    a form of [Datalog](http://docs.datomic.com/query.html).
+
+ 9. It finds two titles (from
+    [resources/database/sample_data.edn](https://github.com/rmoehn/theatralia/blob/master/resources/database/sample_data.edn)),
+    represented as a set of maps. It sorts them alphabetically, wraps them in a
+    response map and returns them.
+
+ 10. The result is sent to the client as an EDN string. EDN is a format often
+     used for serializing Clojure data structures and looks just like regular
+     Clojure code.
+
+ 11. When the client receives the result, the `:on-complete` function defined in
+     `process-input` is called. It puts the data into the `:search-result` part
+     of the `app-state`.
+
+ 12. Since `result-view` observes the `:search-result` part of `app-state`, it
+     gets notified by the change. On re-render, it constructs an Om component
+     for every item in the `:search-result` part, so that they get displayed to
+     you.
+
 ## The components of the server
 
 The server consist of several parts, which I call components, since they

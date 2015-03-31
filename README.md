@@ -20,6 +20,10 @@ run again.
 
 ## Documentation overview
 
+The documentation is quite extensive in parts, because there are stakeholders
+who are not familiar with the used technologies, but still want to be able to
+understand the system quickly. We have these things:
+
  1. This README. Lots of different things I wrote down when they came to my
     mind. Provides you with some context. Might be cleaned up in the future.
  2. Comments and doc strings in the source code. At the moment rather sparse,
