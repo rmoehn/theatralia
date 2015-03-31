@@ -109,7 +109,7 @@ detailed information.
 Currently we have three components. One is the Jetty HTTP server running inside
 the server process. It is defined in
 [src/clj/theatralia/web_server.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/web_server.clj).
-One takes care of the connection to the database. It is defined in
+One is responsible for the connection to the database. It is defined in
 [src/clj/theatralia/database.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/thea)
 The third is a static component for routing. See
 [src/clj/theatralia/routes.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/routes.clj).
@@ -120,9 +120,9 @@ For starting and stopping the server during development you run `(go)` and
 `(start)` starts the components in the right order (taking care of dependencies
 between components). It first turns on the database component, which sets up the
 connection to our Datomic transactor and does further setup steps if necessary.
-It creates the routing componentm, providing it with access to the database
+It creates the routing component, providing it with access to the database
 component. Finally it switches on the Jetty HTTP server, giving it a reference
 to the routing component. `(stop)` stops the components in the reverse order.
 
 If you have changed some code, you use `(reset)` to stop the system, reload
-everything that has changed in a proper way and start it again.
+everything that has changed in the proper way and start it again.
