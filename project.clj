@@ -32,15 +32,19 @@
             [lein-cljsbuild "1.0.4"]
             [lein-npm "0.4.0"]]
 
-  :source-paths ["src/clj" "src/cljs" "target/classes"]
+  :source-paths ["src/clj" "src/cljs"]
   :resource-paths ["resources"]
 
-  :clean-targets [:target-path
-                  :compile-path
-                  "resources/public/js/out"
-                  "resources/public/js/repl-out"
-                  "resources/public/js/main.js"
-                  "resources/public/js/main.min.js"]
+  :clean-targets  [:target-path
+
+                  ;; The following can't be :clean-targets, because they would
+                  ;; get deleted before they could be packed into the uberjar.
+                  ;; Delete them manually if you need.
+                  ;"resources/public/js/out"
+                  ;"resources/public/js/repl-out"
+                  ;"resources/public/js/main.js"
+                  ;"resources/public/js/main.min.js"
+                  ]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
@@ -49,14 +53,14 @@
                    :plugins
                    [[lein-midje "3.1.3"]]}}
 
-  :ring {:init theatralia.main/start-production-system
-         :handler theatralia.main/production-handler
-         :destroy theatralia.main/stop-production-system
-         :uberwar-name theatralia.war}
+  :main theatralia.core
+  :aot [theatralia.core]
+
+  :hooks [leiningen.cljsbuild]
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src/clj" "src/cljs"] ; Do we need target/classes?
+              :source-paths ["src/cljs"] ; Do we need target/classes?
               :notify-command ["notify-send"]
               :compiler {
                 :output-to "resources/public/js/main.js"
@@ -65,7 +69,7 @@
                 :cache-analysis true
                 :source-map true}}
              {:id "release"
-              :source-paths ["src/clj" "src/cljs"] ; Do we need target/classes?
+              :source-paths ["src/cljs"] ; Do we need target/classes?
               :compiler {
                 :output-to "resources/public/js/main.min.js"
                 :pretty-print false
