@@ -10,7 +10,7 @@
 
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :username [:gpg :env/datomic_username]
-                                   :passphrase [:gpg :env/datomic_passphrase]}}
+                                   :password [:gpg :env/datomic_passphrase]}}
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2913"]
