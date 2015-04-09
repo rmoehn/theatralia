@@ -2,16 +2,8 @@ language: clojure
 lein: lein2
 jdk:
 - openjdk7
-install: lein ring uberwar
+install:lein uberjar
 script: lein midje
-before_deploy: git fetch --tags
-deploy:
-  provider: releases
-  skip_cleanup: true
-  api_key:
-    secure: QUD36XNZNlUEqBf0fcO+oj6Ti22ZfaGtdSxbbIHhe7Ka6IBXFGf7MMO4FqpCPsLLmjuxT5eT6nwXtXtYi6UoqxsUmwV6yWYqqYqimoCf3/o3f4DqiBPSz8yK3Ff+TP/7Kc0ley2Ii5IBjgVQAJuCAnmzIXJ4lsc1ugA+IG5w/sA=
-  file: target/theatralia.war
-  on:
-    tags: true
-    all_branches: true
-    repo: rmoehn/theatralia
+before_install:
+- openssl aes-256-cbc -K $encrypted_13ccd2685f1c_key -iv $encrypted_13ccd2685f1c_iv
+  -in credentials.clj.enc -out ~/.lein/credentials.clj -d
