@@ -4,8 +4,5 @@ jdk:
 - openjdk7
 install: lein uberjar
 script: lein midje
-before_install:
-- openssl aes-256-cbc -K $encrypted_13ccd2685f1c_key -iv $encrypted_13ccd2685f1c_iv
-  -in credentials.clj.enc -out ~/.lein/credentials.clj -d
 env:
   secure: UXo7WTdT89eg+83qbxtntNcD9DGWPJnPflagbfFaaLLzrvB8+9rGsEa3PHPzDZXZL0O7iAYsgEPdfk1HfmEN7gx4qfhWq4I6j8UdbjnOajs+cnukuCuxhUy3o/l0wqXb7vQUb4qfG/wWifRzQ9K7KFKyYqi6KaQon0+7IfI6gFk=
