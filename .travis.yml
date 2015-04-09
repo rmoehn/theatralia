@@ -5,4 +5,4 @@ jdk:
 install: lein uberjar
 script: lein midje
 env:
-  secure: UXo7WTdT89eg+83qbxtntNcD9DGWPJnPflagbfFaaLLzrvB8+9rGsEa3PHPzDZXZL0O7iAYsgEPdfk1HfmEN7gx4qfhWq4I6j8UdbjnOajs+cnukuCuxhUy3o/l0wqXb7vQUb4qfG/wWifRzQ9K7KFKyYqi6KaQon0+7IfI6gFk=
+  secure: "ae78SqIiUV9Qh7dOJyNysV4qy2fqTN9lAC730JKcvdvtUmYqgNrBwEMcLxXV5C5FZ+Eh4JrFP+VGfpuAwR7NlSPCnvFTT9lfBDm6PnhncZkAm4gKG/lN9kcmv1pOthXHzhY6wtldkBOctW1BNblvZXna29akGdpLV7RaS280J/k="
