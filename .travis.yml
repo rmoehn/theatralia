@@ -2,7 +2,7 @@ language: clojure
 lein: lein2
 jdk:
 - openjdk7
-install:lein uberjar
+install: lein uberjar
 script: lein midje
 before_install:
 - openssl aes-256-cbc -K $encrypted_13ccd2685f1c_key -iv $encrypted_13ccd2685f1c_iv
