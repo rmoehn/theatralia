@@ -22,7 +22,8 @@ run again.
 
 The documentation is quite extensive in parts, because there are stakeholders
 who are not familiar with the used technologies, but still want to be able to
-understand the system quickly. We have these things:
+understand the system quickly. Other parts are very short and mainly contain
+references to external documentation. We have these things:
 
  1. This README. Lots of different things I wrote down when they came to my
     mind. Provides you with some context. Might be cleaned up in the future.
@@ -30,10 +31,15 @@ understand the system quickly. We have these things:
     but get beefed up whenever a region of the code becomes reasonably stable.
  3. Commit log. I am a fan of informative commit messages, so you will see many
     of my thoughts and decisions documented there.
- 3. [`doc/running.md`](https://github.com/rmoehn/theatralia/blob/master/doc/running.md)
-    – Shows how to start the system for development.
  4. [`doc/system-overview.md`](https://github.com/rmoehn/theatralia/blob/master/doc/system-overview.md)
     – Shows how the various parts of the system work together.
+ 3. [`doc/running-development.md`](https://github.com/rmoehn/theatralia/blob/master/doc/running-development.md)
+    – Shows how to set up the system for development.
+ 3. [`doc/running-production.md`](https://github.com/rmoehn/theatralia/blob/master/doc/running-production.md)
+    – Shows how to set up the system for production.
+
+If you miss something or feel that after reading a section you don't
+understand more than before, please open an issue or fix it yourself.
 
 ## Notes from the start
 
@@ -73,22 +79,6 @@ since all it takes to switch to Datomic Free is changing a Leiningen dependency
 and the connection URI. That's also what you could do in order to test locally
 if you don't already have Datomic Pro Starter Edition. You should go and get it,
 though! Just kidding.
-
-## How to test on a local Tomcat
-
-This doesn't work at the moment, but will be fixed sometime.
-
- 1. Run `lein ring uberwar`.
- 2. Copy `target/theatralia.war` to your Tomcat's webapps directory, probably
-    `/var/lib/tomcat8/webapps/`.
- 3. Restart Tomcat.
- 4. Point your browser to http://localhost:8080/theatralia. If Tomcat listens on
-    a different port, you have to use that, of course.
-
-Credits:
-
- - https://fitacular.com/blog/clojure/2014/07/14/deploy-clojure-tomcat-nginx/
- - https://github.com/weavejester/lein-ring
 
 ## Tags and versioning
 

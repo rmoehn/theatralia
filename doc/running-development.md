@@ -2,7 +2,9 @@
 
 [doc/system-overview.md](https://github.com/rmoehn/theatralia/blob/master/doc/system-overview.md)
 shows you which parts the system has and how they interact. This document is
-about how to start all these parts when you want to work on Theatralia.
+about how to start all these parts when you want to work on Theatralia. See
+[doc/running-development.md](https://github.com/rmoehn/theatralia/blob/master/doc/running-development.md)
+if you want to deploy it somewhere.
 
 ## Preparing dependencies
 
