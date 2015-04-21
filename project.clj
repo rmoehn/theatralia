@@ -1,4 +1,4 @@
-(defproject theatralia "0.1.1"
+(defproject theatralia "0.1.2-SNAPSHOT"
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
   ;; Umm, maybe I should read this stuff about semantic versioning, though.
@@ -13,7 +13,7 @@
                                    :password [:gpg :env/datomic_passphrase]}}
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2913"]
+                 [org.clojure/clojurescript "0.0-3196"]
                  [medley "0.5.5"]
                  [com.stuartsierra/component "0.2.2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
@@ -31,7 +31,7 @@
   :node-dependencies [[source-map-support "0.2.8"]]
 
   :plugins [[lein-ring "0.8.13"]
-            [lein-cljsbuild "1.0.4"]
+            [lein-cljsbuild "1.0.5"]
             [lein-npm "0.4.0"]]
 
   :source-paths ["src/clj" "src/cljs"]
