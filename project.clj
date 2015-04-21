@@ -1,4 +1,4 @@
-(defproject theatralia "0.0.1-SNAPSHOT"
+(defproject theatralia "0.1.1"
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
   ;; Umm, maybe I should read this stuff about semantic versioning, though.
@@ -53,10 +53,12 @@
                    [[midje "1.6.3" :exclusions [org.clojure/clojure]]
                     [org.clojure/tools.namespace "0.2.7"]]
                    :plugins
-                   [[lein-midje "3.1.3"]]}}
+                   [[lein-midje "3.1.3"]]}
+             :uberjar {:main theatralia.core
+                       :aot [theatralia.core]}}
 
-  :main theatralia.core
-  :aot [theatralia.core]
+  :jar-name "theatralia-%s-incomplete.jar"
+  :uberjar-name "theatralia-%s.jar"
 
   :hooks [leiningen.cljsbuild]
 
