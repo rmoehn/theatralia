@@ -51,6 +51,7 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
                    [[midje "1.6.3" :exclusions [org.clojure/clojure]]
+                    [org.clojure/test.check "0.7.0"]
                     [org.clojure/tools.namespace "0.2.7"]]
                    :plugins
                    [[lein-midje "3.1.3"]]}
