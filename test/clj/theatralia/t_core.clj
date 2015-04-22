@@ -3,14 +3,8 @@
             [clojure.test.check :as tc]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
+            [theatralia.test.utils :refer [quick-check]]
             [theatralia.core :refer [first-element]]))
-
-;;; Credits: http://zotskolf.nl/2014/11/10/testcheckbasics.html
-
-(defn quick-check [times]
-  (fn [prop]
-    ((just {:result true :num-tests times :seed anything})
-     (tc/quick-check times prop))))
 
 (facts "about `first-element`"
   (fact "it normally returns the first element"

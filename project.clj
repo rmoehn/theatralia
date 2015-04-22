@@ -35,6 +35,7 @@
             [lein-npm "0.4.0"]]
 
   :source-paths ["src/clj" "src/cljs"]
+  :test-paths ["test/clj"]
   :resource-paths ["resources"]
 
   :clean-targets  [:target-path
