@@ -8,7 +8,7 @@
   look into it again when I set up continuous integration and perhaps automatic
   deployment."
   (:require [com.stuartsierra.component :as component]
-            [theatralia.database :refer [make-database]]
+            [theatralia.database.component :refer [make-database]]
             [theatralia.web-server :refer [make-web-server]]
             [theatralia.routes :refer [make-routes]]))
 

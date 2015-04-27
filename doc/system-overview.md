@@ -308,7 +308,7 @@ Currently we have three components. One is the Jetty HTTP server running inside
 the server process. It is defined in
 [src/clj/theatralia/web_server.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/web_server.clj).
 One is responsible for the connection to the database. It is defined in
-[src/clj/theatralia/database.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/thea)
+[src/clj/theatralia/database/component.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/database/component.clj)
 The third is a static component for routing. See
 [src/clj/theatralia/routes.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/routes.clj).
 

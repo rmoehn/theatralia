@@ -1,4 +1,4 @@
-(ns theatralia.database
+(ns theatralia.database.component
   "Defines the component for taking care of the connection to the database.
 
   Also ensures that all data that are required for the system to operate are
