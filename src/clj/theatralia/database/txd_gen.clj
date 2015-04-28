@@ -9,9 +9,10 @@
   (map - s))
 
 (defn dezip [s]
-  (let [tuple-size (count (first s))]
+  (let [tuple-size (count (first s))
+        s-seq (seq s)]
     (mapv (fn [n]
-            (map #(nth % n) s))
+            (map #(nth % n) s-seq))
           (range tuple-size))))
 
 ;;;; Generators for adding materials
@@ -34,9 +35,9 @@
   Returns a seq of the (temporary) entity IDs to be used in the same transaction
   and a vector of transaction maps."
   (when tags
-    (let [[present-tags eids] (get-present-tags db tags owner-eid)
+    (let [[eids present-tags] (get-present-tags db tags owner-eid)
           tags-to-add (remove (set present-tags) tags)
-          tempids (map #(d/tempid :part/bibliography)
+          tempids (map #(d/tempid :part/bibliography %)
                        (invert (range (count tags-to-add))))]
       [(concat eids tempids)
        (mapv (fn [i t]
