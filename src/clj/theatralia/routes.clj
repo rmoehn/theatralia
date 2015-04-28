@@ -15,6 +15,7 @@
             [ring.middleware.edn :refer [wrap-edn-params]]
             [datomic.api :as d]
             [theatralia.welcome-page :as wp]
+            [theatralia.database.canned-queries :as qcan]
             [theatralia.database.txd-gen :as txd-gen])
   (:import java.util.concurrent.ExecutionException))
 
@@ -43,7 +44,7 @@
   capabilities are note implemented, the owner will be sandbox." ; ->LIVE-SPEC
   [conn m]
   (let [db (d/db conn)
-        sandbox-eid (d/q '[:find ?e . :where [?e :user/username "sandbox"]] db)
+        sandbox-eid (qcan/get-sandbox-eid db)
         [tag-eids tags-txd] (txd-gen/add-tags-txd conn (m :tags) sandbox-eid)
         mat-txd (txd-gen/add-material-txd m tag-eids sandbox-eid)]
     (try
