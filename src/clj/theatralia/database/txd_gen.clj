@@ -17,13 +17,12 @@
 ;;;; Generators for adding materials
 
 (defn get-present-tags [db tags owner-eid]
-  (let [tags-s (set tags)]
-    (dezip (d/q '[:find ?e ?t
-                  :in $ ?ts ?o
-                  :where [?e :tag/owner ?o]
-                         [?e :tag/text ?t]
-                         [(contains? ?ts ?t)]]
-                db tags owner-eid))))
+  (dezip (d/q '[:find ?e ?t
+                :in $ ?ts ?o
+                :where [?e :tag/owner ?o]
+                       [?e :tag/text ?t]
+                       [(contains? ?ts ?t)]]
+              db (set tags) owner-eid)))
 
 (defn add-tags-txd [db tags owner-eid]
   "Generates a transaction data structure for adding tags for user with
