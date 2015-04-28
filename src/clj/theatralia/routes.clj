@@ -31,13 +31,13 @@
 
 ;;;; Some handlers.
 
-(defn search-for [conn s]
+(defn search-for [db s]
   (generate-response
     (sort-by #(nth % 2) >
              (d/q '[:find ?e ?t ?sc
                     :in $ ?s
                     :where [(fulltext $ :material/title ?s) [[?e ?t _ ?sc]]]]
-                  (d/db conn) s))))
+                  db s))))
 
 (defn save-material
   "Add material described by m to the database. Since currently multi-user
@@ -45,7 +45,7 @@
   [conn m]
   (let [db (d/db conn)
         sandbox-eid (qcan/get-sandbox-eid db)
-        [tag-eids tags-txd] (txd-gen/add-tags-txd conn (m :tags) sandbox-eid)
+        [tag-eids tags-txd] (txd-gen/add-tags-txd db (m :tags) sandbox-eid)
         mat-txd (txd-gen/add-material-txd m tag-eids sandbox-eid)]
     (try
       @(d/transact conn (conj tags-txd mat-txd))
@@ -65,7 +65,7 @@
           (cj/GET "/main.css" [] (wp/main-css))
 
           ;; REST (?) interface for client-side application
-          (cj/GET "/gq/:s" [s] (search-for conn s))
+          (cj/GET "/gq/:s" [s] (search-for (d/db conn) s))
           (cj/POST "/materials" {new-material :edn-params}
                                 (save-material conn new-material))
 

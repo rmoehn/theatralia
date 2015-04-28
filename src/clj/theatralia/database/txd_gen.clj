@@ -16,18 +16,26 @@
 
 ;;;; Generators for adding materials
 
-(defn get-present-tags [conn tags owner-eid]
+(defn get-present-tags [db tags owner-eid]
   (let [tags-s (set tags)]
     (dezip (d/q '[:find ?e ?t
                   :in $ ?ts ?o
                   :where [?e :tag/owner ?o]
                          [?e :tag/text ?t]
                          [(contains? ?ts ?t)]]
-                (d/db conn) tags owner-eid))))
+                db tags owner-eid))))
 
-(defn add-tags-txd [conn tags owner-eid]
+(defn add-tags-txd [db tags owner-eid]
+  "Generates a transaction data structure for adding tags for user with
+  owner-eid to db.
+
+  Assumes that owner-eid is already in database or being added during the same
+  transaction.
+
+  Returns a seq of the (temporary) entity IDs to be used in the same transaction
+  and a vector of transaction maps."
   (when tags
-    (let [[present-tags eids] (get-present-tags conn tags owner-eid)
+    (let [[present-tags eids] (get-present-tags db tags owner-eid)
           tags-to-add (remove (set present-tags) tags)
           tempids (map #(d/tempid :part/bibliography)
                        (invert (range (count tags-to-add))))]
@@ -39,6 +47,12 @@
              tempids tags-to-add)])))
 
 (defn add-material-txd [m tag-eids owner-eid]
+  "Generates a transaction data structure for adding a material with title, URI
+  and comments from m, tags with entity IDs from tag-eids and owner with
+  owner-eid.
+
+  Assumes that tags with tag-eids and owner with owner-eid are already in the
+  database or being added during the same transaction."
   (remove-vals nil? {:db/id #db/id[:part/bibliography]
                      :material/title    (m :title)
                      :material/uri      (m :uri)
