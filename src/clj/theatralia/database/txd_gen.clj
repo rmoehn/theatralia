@@ -25,17 +25,17 @@
                        [(contains? ?ts ?t)]]
               db (set tags) owner-eid)))
 
-(defn add-tags-txd [db tags owner-eid]
+(defn add-tags-txd [db tags user-eid]
   "Generates a transaction data structure for adding tags for user with
-  owner-eid to db.
+  user-eid to db.
 
-  Assumes that owner-eid is already in database or being added during the same
-  transaction.
+  Assumes that user with user-eid is already in database or being added during
+  the same transaction.
 
   Returns a seq of the (temporary) entity IDs to be used in the same transaction
   and a vector of transaction maps."
   (when tags
-    (let [[eids present-tags] (get-present-tags db tags owner-eid)
+    (let [[eids present-tags] (get-present-tags db tags user-eid)
           tags-to-add (remove (set present-tags) tags)
           tempids (map #(d/tempid :part/bibliography %)
                        (invert (range (count tags-to-add))))]
@@ -43,19 +43,19 @@
        (mapv (fn [i t]
                {:db/id i
                 :tag/text t
-                :tag/owner owner-eid})
+                :tag/owner user-eid})
              tempids tags-to-add)])))
 
-(defn add-material-txd [m tag-eids owner-eid]
+(defn add-material-txd [m tag-eids user-eid]
   "Generates a transaction data structure for adding a material with title, URI
   and comments from m, tags with entity IDs from tag-eids and owner with
-  owner-eid.
+  user-eid.
 
-  Assumes that tags with tag-eids and owner with owner-eid are already in the
+  Assumes that tags with tag-eids and user with user are already in the
   database or being added during the same transaction."
   (remove-vals nil? {:db/id #db/id[:part/bibliography]
                      :material/title    (m :title)
                      :material/uri      (m :uri)
                      :material/comments (m :comments)
                      :material/tags     tag-eids
-                     :material/owner    owner-eid}))
+                     :material/owner    user-eid}))

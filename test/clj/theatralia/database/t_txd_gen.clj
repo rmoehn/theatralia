@@ -31,35 +31,27 @@
 (facts "about add-tags-txd"
   (fact "After transacting the results, all tags should be present in DB."
     (let [db (empty-db)
-          owner-eid (qcan/get-sandbox-eid db)]
-      (prop/for-all [tags (gen/vector gen/string)]
+          owner-eid (qcan/username->eid db "sandbox")]
+      (prop/for-all [tags (gen/vector gen/string-ascii)]
         (let [db-after (suppose db ((nut/add-tags-txd db tags owner-eid) 1))
-              tags-after (d/q '[:find [?t ...]
-                                :in $ ?o
-                                :where [?e :tag/text ?t]
-                                       [?e :tag/owner ?o]]
-                              db-after owner-eid)]
+              tags-after (qcan/tags-of-user-eid db-after owner-eid)]
           (contains-all? tags-after tags))))
     => (quick-check 100))
 
   (fact "After transacting once, the result of the second run should be empty."
     (let [db (empty-db)
-          owner-eid (qcan/get-sandbox-eid db)]
+          owner-eid (qcan/username->eid db "sandbox")]
       (prop/for-all [tags (gen/vector gen/string)]
         (let [db-after (suppose db ((nut/add-tags-txd db tags owner-eid) 1))
-              new-txd (nut/add-tags-txd db-after tags owner-eid)]
-          (empty? (new-txd 1)))))
+              new-txd ((nut/add-tags-txd db-after tags owner-eid) 1)]
+          (empty? new-txd))))
     => (quick-check 100))
 
   (fact "There should be no two tags with the same text and owner-eid."
     (let [db (empty-db)
-          owner-eid (qcan/get-sandbox-eid db)]
+          owner-eid (qcan/username->eid db "sandbox")]
       (prop/for-all [tags (gen/vector gen/string)]
         (let [db-after (suppose db ((nut/add-tags-txd db tags owner-eid) 1))
-              tags-after (d/q '[:find [?t ...]
-                                :in $ ?o
-                                :where [?e :tag/text ?t]
-                                [?e :tag/owner ?o]]
-                              db-after owner-eid)]
+              tags-after (qcan/tags-of-user-eid db-after owner-eid)]
           (apply distinct? tags-after))))
     => (quick-check 100)))

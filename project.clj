@@ -16,6 +16,8 @@
                  [org.clojure/clojurescript "0.0-3196"]
                  [medley "0.5.5"]
                  [com.stuartsierra/component "0.2.2"]
+                 [slingshot "0.12.2"]
+                 [dire "0.5.3"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-rc1"]
                  [om-sync "0.1.1"]

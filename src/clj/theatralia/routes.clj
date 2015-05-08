@@ -10,14 +10,14 @@
   I expect everything that is not concerned with routing to be gradually
   extracted to other namespaces."
   (:require [com.stuartsierra.component :as component]
+            [dire.core :refer [supervise with-handler]]
             [compojure.core :as cj]
             [compojure.route :as route]
             [ring.middleware.edn :refer [wrap-edn-params]]
             [datomic.api :as d]
             [theatralia.welcome-page :as wp]
             [theatralia.database.canned-queries :as qcan]
-            [theatralia.database.txd-gen :as txd-gen])
-  (:import java.util.concurrent.ExecutionException))
+            [theatralia.database.transactions :as tx]))
 
 ;;; Credits:
 ;;;  - https://github.com/weavejester/compojure/
@@ -39,21 +39,16 @@
                     :where [(fulltext $ :material/title ?s) [[?e ?t _ ?sc]]]]
                   db s))))
 
-(defn save-material
+(defn add-material
   "Add material described by m to the database. Since currently multi-user
   capabilities are note implemented, the owner will be sandbox." ; ->LIVE-SPEC
   [conn m]
-  (let [db (d/db conn)
-        sandbox-eid (qcan/get-sandbox-eid db)
-        [tag-eids tags-txd] (txd-gen/add-tags-txd db (m :tags) sandbox-eid)
-        mat-txd (txd-gen/add-material-txd m tag-eids sandbox-eid)]
-    (try
-      @(d/transact conn (conj tags-txd mat-txd))
-      (catch ExecutionException e
-        (do
-          (-> e .getCause .printStackTrace)
-          (generate-response "Transaction failed" 500))))
-    (generate-response :ok))) ; ->LIVE-SPEC
+  (supervise #'tx/add-material conn m "sandbox")
+  (generate-response :ok))
+
+(with-handler #'add-material
+  [:condition :could-not-add] ; Not the right namespace yet.
+  #(generate-response "Couldn't add material." 500)) ; ->LIVE-SPEC
 
 ;;;; The actual component
 
@@ -67,7 +62,7 @@
           ;; REST (?) interface for client-side application
           (cj/GET "/gq/:s" [s] (search-for (d/db conn) s))
           (cj/POST "/materials" {new-material :edn-params}
-                                (save-material conn new-material))
+                                (supervise #'add-material conn new-material))
 
           ;; Fallback handlers
           (route/resources "/")
