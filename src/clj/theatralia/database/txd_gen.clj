@@ -55,7 +55,7 @@
     (let [[eids present-tags] (get-present-tags db tags user-eid)
           tags-to-add (remove (set present-tags) tags)
           tempids (map #(d/tempid :part/bibliography %)
-                       (invert (range (count tags-to-add))))]
+                       (invert (range 1 (inc (count tags-to-add)))))]
       [(concat eids tempids)
        (mapv (fn [i t]
                {:db/id i
