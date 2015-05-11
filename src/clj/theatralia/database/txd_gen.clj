@@ -6,9 +6,24 @@
 ;;;; Utilities for adding materials
 
 (defn invert [s]
+  "Maps a sequence of numbers to a sequence of those numbers each multiplied
+  with -1."
   (map - s))
 
 (defn dezip [s]
+  "Something like the inverse of zip. – Unravels a seq of m n-tuples into a
+  n-tuple of seqs of length m.
+
+  Example:
+    (dezip '([11 12] [21 22] [31 32] [41 42]))
+      ;=> [(11 21 31 41) (12 22 32 42)]
+
+  Umm, actually there is no zip in Clojure. Instead, you'd use this:
+    (apply map vector ['(11 21 31 41) '(12 22 32 42)])
+      ;=> ([11 12] [21 22] [31 32] [41 42]))
+
+  Note that I'm using lists here only for demonstrating that we're not limited
+  to vectors."
   (let [tuple-size (count (first s))
         s-seq (seq s)]
     (mapv (fn [n]
@@ -18,6 +33,8 @@
 ;;;; Generators for adding materials
 
 (defn get-present-tags [db tags owner-eid]
+  "Returns a tuple [eids tag-texts] for all tags of user with OWNER-ID that are
+  both in the database and in TAGS."
   (dezip (d/q '[:find ?e ?t
                 :in $ ?ts ?o
                 :where [?e :tag/owner ?o]

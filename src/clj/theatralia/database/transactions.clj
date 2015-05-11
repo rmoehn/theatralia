@@ -1,5 +1,5 @@
 (ns theatralia.database.transactions
-  "Functions providing the complete write interface to our database."
+  "Functions providing the complete write interface to our Datomic database."
   (:require [slingshot.slingshot :refer [throw+]]
             [dire.core :refer [with-handler]]
             [taoensso.timbre :as timbre]

@@ -32,6 +32,8 @@
 ;;;; Some handlers.
 
 (defn search-for [db s]
+  "Returns a response map containing eids, titles and full text search scores of
+  materials whose title matches the search string S."
   (generate-response
     (sort-by #(nth % 2) >
              (d/q '[:find ?e ?t ?sc

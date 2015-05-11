@@ -56,4 +56,5 @@
 
 (defn make-database [uri]
   (component/using (map->Database {:uri uri})
-                   [:logging]))
+                   [:logging])) ; Ensure proper start-up order. See
+                                ; theatralia.logging.
