@@ -60,6 +60,8 @@ Consume these:
 
  - [Stuart Sierra: Components. Just Enough Structure](http://youtu.be/13cmHf_kt-Q)
  - http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded
+ - When to use records, maps, `reify`:
+   https://groups.google.com/d/msg/clojure/xqU_JSFWK-k/j0-ND8NLqgAJ
 
 ## Credits <a name="credits"></a>
 

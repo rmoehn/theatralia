@@ -304,23 +304,28 @@ are taken care of by the framework
 [README](https://github.com/rmoehn/theatralia#notes-from-the-start) for more
 detailed information.
 
-Currently we have three components. One is the Jetty HTTP server running inside
-the server process. It is defined in
-[src/clj/theatralia/web_server.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/web_server.clj).
-One is responsible for the connection to the database. It is defined in
-[src/clj/theatralia/database/component.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/database/component.clj)
-The third is a static component for routing. See
-[src/clj/theatralia/routes.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/routes.clj).
+Currently we have four components:
+
+ 0. A logging component. It just sets and resets logging configuration:
+    [src/clj/theatralia/logging.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/logging.clj)
+ 1. The Jetty HTTP server running inside the server process. It is defined in
+    [src/clj/theatralia/web_server.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/web_server.clj).
+ 2. The component responsible for the connection to the database. It is defined
+    in
+    [src/clj/theatralia/database/component.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/database/component.clj)
+ 3. A static component for routing. See
+    [src/clj/theatralia/routes.clj](https://github.com/rmoehn/theatralia/blob/master/src/clj/theatralia/routes.clj).
 
 For starting and stopping the server during development you run `(go)` and
 `(stop)` at the REPL. These are defined in
 [dev/user.clj](https://github.com/rmoehn/theatralia/blob/master/dev/user.clj).
 `(start)` starts the components in the right order (taking care of dependencies
-between components). It first turns on the database component, which sets up the
-connection to our Datomic transactor and does further setup steps if necessary.
-It creates the routing component, providing it with access to the database
-component. Finally it switches on the Jetty HTTP server, giving it a reference
-to the routing component. `(stop)` stops the components in the reverse order.
+between components). It first sets the logging configuration straight. Then it
+turns on the database component, which sets up the connection to our Datomic
+transactor and does further setup steps if necessary. It creates the routing
+component, providing it with access to the database component. Finally it
+switches on the Jetty HTTP server, giving it a reference to the routing
+component. `(stop)` stops the components in the reverse order.
 
-If you have changed some code, you use `(reset)` to stop the system, reload
+When you have changed some code, you use `(reset)` to stop the system, reload
 everything that has changed in the proper way and start it again.
