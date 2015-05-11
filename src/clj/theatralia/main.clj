@@ -8,6 +8,7 @@
   look into it again when I set up continuous integration and perhaps automatic
   deployment."
   (:require [com.stuartsierra.component :as component]
+            [theatralia.logging :refer [make-logging]]
             [theatralia.database.component :refer [make-database]]
             [theatralia.web-server :refer [make-web-server]]
             [theatralia.routes :refer [make-routes]]))
@@ -19,6 +20,7 @@
 
 (defn make-system [config]
   (component/system-map
+    :logging (make-logging (:log-path config))
     :web-app (make-routes)
     :web-server (make-web-server (:web-server-port config))
     :database (make-database (:database-uri config))))

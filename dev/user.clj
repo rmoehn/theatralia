@@ -22,6 +22,7 @@
     #'system
     (constantly (main/make-system
                   {:web-server-port 17777
+                   :log-path "/tmp/theatralia.log"
                    :database-uri "datomic:dev://localhost:4334/theatralia"}))))
 
 (defn start []

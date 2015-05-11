@@ -56,4 +56,4 @@
 
 (defn make-database [uri]
   (component/using (map->Database {:uri uri})
-                   []))
+                   [:logging]))

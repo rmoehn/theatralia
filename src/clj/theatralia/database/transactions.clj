@@ -2,6 +2,7 @@
   "Functions providing the complete write interface to our database."
   (:require [slingshot.slingshot :refer [throw+]]
             [dire.core :refer [with-handler]]
+            [taoensso.timbre :as timbre]
             [datomic.api :as d]
             [theatralia.database.canned-queries :as qcan]
             [theatralia.database.txd-gen :as txd-gen])
@@ -26,5 +27,5 @@
 (with-handler #'add-material
   ExecutionException
   (fn [e & args]
-    (-> e .getCause .printStackTrace)
+    (timbre/error (.getCause e))
     (throw+ {:type :could-not-add})))
