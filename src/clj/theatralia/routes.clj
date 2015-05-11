@@ -47,7 +47,7 @@
   (generate-response :ok))
 
 (with-handler #'add-material
-  [:condition :could-not-add] ; Not the right namespace yet.
+  [:condition :could-not-add]
   #(generate-response "Couldn't add material." 500)) ; ->LIVE-SPEC
 
 ;;;; The actual component

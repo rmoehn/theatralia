@@ -19,9 +19,9 @@
   such gymnastics with generating transaction data."
   [conn m username]
   (let [db (d/db conn)
-        user-eid (qcan/username->eid username)
+        user-eid (qcan/username->eid db username)
         [tag-eids tags-txd] (txd-gen/add-tags-txd db  (m :tags) user-eid)
-        mat-txd  (txd-gen/add-material-txd db m tag-eids user-eid)]
+        mat-txd (txd-gen/add-material-txd m tag-eids user-eid)]
     @(d/transact conn (conj tags-txd mat-txd))))
 
 (with-handler #'add-material
