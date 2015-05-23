@@ -98,28 +98,3 @@
       (let [tags-after (qcan/tags-of-user-eid db-after owner-eid)]
         (apply distinct? tags-after)))
     => (quick-check 100)))
-
-(comment
-
-  (require '[theatralia.database.t-txd-gen :as t])
-  (require '[theatralia.database.canned-queries :as qcan])
-  (require '[theatralia.database.txd-gen :as txd-gen])
-
-  (def db-0 (t/fresh-db))
-  (def oeid (qcan/username->eid db-0 "sandbox"))
-  (def res-1 (txd-gen/add-tags-txd db-0 ["a"] oeid))
-
-
-  )
-
-  ; add-material-txd
-  ; Properties:
-  ;  - None should have nil? for a value.
-  ;  - Hm, this one is pretty borinrc/clj/theatralia/routes.clj
-  ;  - What do we want to do if same material transacted twice?
-  ;  - Tags already present shouldn't be modified.
-  ;  - Shouldn't add more tags than we want.
-  ;  - Make sure that when there are some tags already in the database and our
-  ;    list of tags contains some of these, the ones that are contained are left
-  ;    in peace and the extra ones are added.
-  ;  - What about duplicate tags in tags?
