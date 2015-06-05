@@ -32,7 +32,8 @@
                  [beckon "0.1.1"]]
 
   :plugins [[lein-ring "0.9.4"]
-            [lein-cljsbuild "1.0.6"]]
+            [lein-cljsbuild "1.0.6"]
+            [lein-figwheel "0.3.3"]]
 
   :source-paths ["src/clj" "src/cljs"]
   :test-paths ["test/clj"]
@@ -61,7 +62,13 @@
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src/cljs"]
+              :figwheel true
               :compiler {
+                ; Figwheel-specific things
+                :main theatralia.core
+                :asset-path "/js/out" ; Base URL for JS requests from browser.
+                :recompile-dependents true ; Speed doesn't matter right now.
+
                 :output-to "resources/public/js/main.js"
                 :output-dir "resources/public/js/out"
                 :optimizations :none
