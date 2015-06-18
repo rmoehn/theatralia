@@ -4,140 +4,100 @@
   Defines an application with a part for searching and a part for adding
   materials. Installs it in the HTML element with ID \"app\" on the page where
   it is loaded."
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [reagent.ratom :refer [reaction]])
   (:require [cljs.core.async :as async :refer [put! chan alts!]]
-            [goog.dom :as gdom]
-            [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [om-sync.util :refer [edn-xhr]]
-            [kioo.om :as kiom]
+            [reagent.core :as reagent]
+            [thomsky.core :as th]
+            [thomsky.subs :as subs]
+            [thomsky.datascript :as thsd]
+            [datascript :as d]
+            [kioo.reagent :as kioo :include-macros true]
             kioo.util ; so that kioo/component won't cause warnings
-            [kioo.core :as kioo :include-macros true]))
+            [kioo.core :as kioo-core]))
+ ; Deleted all macro stuff. We might need it.
 
 ;;; Credits:
-;;;  - https://github.com/swannodette/om
-;;;  - https://github.com/swannodette/om/wiki/Basic-Tutorial
-;;;  - https://github.com/omcljs/om/wiki/Advanced-Tutorial
 ;;;  - https://github.com/ckirkendall/kioo
 ;;;  - https://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs
-
-;;;; Some utilities
+;;;  - https://gist.github.com/allgress/11348685
 
 (enable-console-print!)
 
-(defn print-error [{:keys [error]}]
-  (println "Error:" error))
+(defn name-query [db [_]]
+  (reaction @(thsd/bind db '[:find ?t . :where [?e :text ?t]])))
 
-(defn handle-change [event kw owner]
-  (om/set-state! owner kw (.. event -target -value)))
+(def app (-> (th/make-thomsky-app)
+             (subs/register-sub :name-query name-query)))
 
-;;;; App state and its API
+(defn greet []
+  (let [name-ratom (subs/subscribe app [:name-query])]
+    (fn [] [:div "Neato, " @name-ratom])))
 
-(def app-state
-  (atom {:search-result []}))
+(comment
+(def result (thsd/bind app-db '[:find ?t :where [?e :text ?t]]))
+(def a-name (reaction (ffirst @result)))
+(def letters (reaction (count @a-name)))
 
-(defn search-result []
-  (om/ref-cursor (:search-result (om/root-cursor app-state))))
+(thsd/bind (:app-db app) '[:find ?t . :where [?e :text ?t]])
 
-;;;; Input field part of search
+  (in-ns 'theatralia.core)
 
-(defn process-input [owner]
-  (let [input (.-value (om/get-node owner "search-input"))]
-    (when input
-      (edn-xhr {:method :get
-                :url (str "/gq/" input)
-                :on-complete (fn [res]
-                               (om/transact! (search-result) #(vec res)))
-                :on-error print-error}))))
+  app
 
-(defn search-view [_ owner]
-  (reify
-    om/IInitState
-    (init-state [_] {:text ""})
+  ((greet))
 
-    om/IRenderState
-    (render-state [this local-state]
+  (:app-db app)
+
+  (d/transact! (:app-db app) [{:db/id 1 :text "Gory"}])
+
+  @(name-query (:app-db app) [:x])
+
+  (def the-name (name-query (:app-db app) [:x]))
+
+  @the-name
+
+  ((greet))
+
+(subs/subscribe app [:name-query])
+
+  )
+
+(comment
+
+  (defn search-string [db [_]]
+  (reaction @(bind @db '[:find ?t . :where [?e :scratch/search-string ?t]])))
+(rf/register-sub :search-string search-string)
+
+(defn search-view []
+  (let [search-string (rf/subscribe [:search-string])]
+    (fn []
       (kioo/component "templates/sandbox.html" [:#search-field]
         {[:#searchInput] (kioo/set-attr
-                           :value (:text local-state)
-                           :onChange #(handle-change % :text owner)
-                           :onKeyDown #(when (= (.-key %) "Enter")
-                                         (process-input owner)))
-         [:#submit] (kioo/set-attr
-                      :onClick #(process-input owner))}))))
+                           :value @search-string
+                           :on-click #(rf/dispatch [:chg-search-field %]))}))))
 
-;;;; Result part of search
+(reagent/render [search-view] (js/document.getElementById "app")))
 
-(defn result-item [[id title score] owner]
-  (om/component
-    (kioo/component "templates/sandbox.html"
-      [:#search-results :> :ol :> first-child]
-      {[:li] (kioo/content title)})))
+(comment
 
-(defn result-view [_ owner]
-  (reify
-    om/IRender
-    (render [this]
-      (let [rs (om/observe owner (search-result))]
-        (kioo/component "templates/sandbox.html" [:#search-results]
-          {[:ol] (kioo/content (om/build-all result-item rs))})))))
+  (in-ns 'theatralia.core)
 
-;;;; Adding new materials
+@result
+@a-name
 
-(defn process-new-material [form-state owner]
-  (edn-xhr {:method :post
-            :url "/materials"
-            :data form-state
-            :on-complete #(om/update-state! owner (constantly {}))
-            :on-error print-error}))
+@ratom2
 
-(defn bind-to [form-state owner]
-  (fn [node]
-    (let [kw (keyword (get-in node [:attrs :ref]))]
-      ((kioo/set-attr :value (get form-state kw "")
-                      :onChange #(handle-change % kw owner))
-       node))))
+(greet)
 
-(defn add-material-view [_ owner]
-  (reify
-    om/IInitState
-    (init-state [this] {})
 
-    om/IRenderState
-    (render-state [this form-state]
-      (kioo/component "templates/sandbox.html" [:#add-material-form]
-        {[:#newMatSubmit] (kioo/set-attr
-                            :onClick (fn [e]
-                                       (.preventDefault e)
-                                       (process-new-material form-state owner)))
-         [:.form-control] (bind-to form-state owner)}))))
+(def greeting (reaction (greet a-name)))
 
-;;;; Wiring everything together
+@a-name
 
-(defn sandbox-view [_ owner]
-  (reify
-    om/IRender
-    (render [_]
-      (kioo/component "templates/sandbox.html"
-        {[:#search-field]
-         (kioo/substitute (om/build search-view nil))
+(d/transact! app-db [{:db/id -11 :scratch/search-string "Mario"}])
 
-         [:#search-results]
-         (kioo/substitute (om/build result-view nil))
+@greeting
 
-         [:#add-material-form]
-         (kioo/substitute (om/build add-material-view nil))}))))
-
-(defn app-view [app owner]
-  (reify
-    om/IRender
-    (render [_]
-      (om/build sandbox-view nil))))
-
-(let [tx-chan (chan)
-      tx-pub-chan (async/pub tx-chan (fn [_] :txs))]
-  (om/root app-view app-state
-           {:target (gdom/getElement "app")
-            :shared {:tx-chan tx-pub-chan}
-            :tx-listen (fn [tx-data root-cursor]
-                         (put! tx-chan [tx-data root-cursor]))}))
+(do
+  @greeting))
