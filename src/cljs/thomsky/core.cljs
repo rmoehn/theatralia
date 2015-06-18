@@ -1,29 +1,25 @@
 (ns thomsky.core
   (:require [datascript :as d]
+            [clojure.core.async :as async]
             [re-frame.utils :as rf-utils]
             [thomsky.subs :as subscriptions]))
 
 ;;; Credits:
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/subs.cljs
 
-(defrecord ThomskyApp [app-db key->fn]
+;;; Notes:
+;;;  - I tried to clean up the design. (At least in my opinion it's cleaning up.
+;;;  - Doing this I tried not to loose any knowledge that went into re-frame,
+;;;    because I can't afford to loose knowledge, because I don't have much
+;;;    myself. At least not about front-end stuff.
 
-  subscriptions/IQueryBroker
+(defrecord ThomskyApp [app-db query-handler-for event-chan event-handler-for])
 
-  (register-sub [this key-v handler-fn]
-    (when (contains? key->fn key-v)
-      (rf-utils/warn "re-frame: overwriting subscription-handler for: " key-v))
-    (assoc-in this [:key->fn key-v] handler-fn))
-
-  (subscribe [this v]
-    (let [key-v (rf-utils/first-in-vector v)]
-      (if-some [handler-fn (get key->fn key-v)]
-        (handler-fn app-db v)
-        (rf-utils/error "re-frame: no subscription handler registered for: \""
-                        key-v "\".  Returning a nil subscription.")))))
+(defrecord ThomskyApp [app-db query-broker event-conveyor event-handlers])
 
 (defn make-thomsky-app
-  ([] (make-thomsky-app {}))
-  ([schema]
-   (map->ThomskyApp {:app-db (d/create-conn schema)
-                     :key->fn {}})))
+  [schema query-broker event-conveyor event-handler]
+     (->ThomskyApp (d/create-conn schema)
+                   query-broker
+                   event-conveyor
+                   event-handler))
