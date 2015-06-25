@@ -8,9 +8,11 @@
                    [reagent.ratom :refer [reaction]])
   (:require [cljs.core.async :as async :refer [put! chan alts!]]
             [reagent.core :as reagent]
-            [thomsky.core :as th]
-            [thomsky.subs :as subs]
-            [thomsky.datascript :as thsd]
+            [re-frame.core :as rf]
+            [re-frame.handlers :as handlers]
+            re-frame.db
+            [theatralia.thomsky :as tsky]
+            [theatralia.utils :as th-utils :include-macros true]
             [datascript :as d]
             [kioo.reagent :as kioo :include-macros true]
             kioo.util ; so that kioo/component won't cause warnings
@@ -20,84 +22,27 @@
 ;;; Credits:
 ;;;  - https://github.com/ckirkendall/kioo
 ;;;  - https://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs
-;;;  - https://gist.github.com/allgress/11348685
 
 (enable-console-print!)
 
-(defn name-query [db [_]]
-  (reaction @(thsd/bind db '[:find ?t . :where [?e :text ?t]])))
+(handlers/register-base :initialize tsky/set-up-datascript!)
 
-(def app (-> (th/make-thomsky-app)
-             (subs/register-sub :name-query name-query)))
+(rf/dispatch-sync [:initialize])
+
+(defn change-name [app-db [n]]
+  [{:db/id 1 :text n}])
+
+(th-utils/register-handler* change-name)
+
+(defn name-query [db [_]]
+  (reaction @(tsky/bind db '[:find ?t . :where [?e :text ?t]])))
+
+(th-utils/register-sub* name-query)
 
 (defn greet []
-  (let [name-ratom (subs/subscribe app [:name-query])]
+  (let [name-ratom (rf/subscribe [:name-query])]
     (fn [] [:div "Neato, " @name-ratom])))
 
-(comment
-(def result (thsd/bind app-db '[:find ?t :where [?e :text ?t]]))
-(def a-name (reaction (ffirst @result)))
-(def letters (reaction (count @a-name)))
+(rf/dispatch [:change-name "Grocky"])
 
-(thsd/bind (:app-db app) '[:find ?t . :where [?e :text ?t]])
-
-  (in-ns 'theatralia.core)
-
-  app
-
-  ((greet))
-
-  (:app-db app)
-
-  (d/transact! (:app-db app) [{:db/id 1 :text "Gory"}])
-
-  @(name-query (:app-db app) [:x])
-
-  (def the-name (name-query (:app-db app) [:x]))
-
-  @the-name
-
-  ((greet))
-
-(subs/subscribe app [:name-query])
-
-  )
-
-(comment
-
-  (defn search-string [db [_]]
-  (reaction @(bind @db '[:find ?t . :where [?e :scratch/search-string ?t]])))
-(rf/register-sub :search-string search-string)
-
-(defn search-view []
-  (let [search-string (rf/subscribe [:search-string])]
-    (fn []
-      (kioo/component "templates/sandbox.html" [:#search-field]
-        {[:#searchInput] (kioo/set-attr
-                           :value @search-string
-                           :on-click #(rf/dispatch [:chg-search-field %]))}))))
-
-(reagent/render [search-view] (js/document.getElementById "app")))
-
-(comment
-
-  (in-ns 'theatralia.core)
-
-@result
-@a-name
-
-@ratom2
-
-(greet)
-
-
-(def greeting (reaction (greet a-name)))
-
-@a-name
-
-(d/transact! app-db [{:db/id -11 :scratch/search-string "Mario"}])
-
-@greeting
-
-(do
-  @greeting))
+((greet))

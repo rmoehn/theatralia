@@ -82,4 +82,6 @@
               :compiler {
                 :output-to "resources/public/js/main.min.js"
                 :pretty-print false
-                :optimizations :advanced}}]})
+                :optimizations :advanced}}]}
+
+  :repl-options {:timeout 120000})
