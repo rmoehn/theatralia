@@ -12,7 +12,7 @@
                                    :username [:gpg :env/datomic_username]
                                    :password [:gpg :env/datomic_passphrase]}}
 
-  :dependencies [[org.clojure/clojure "1.7.0-RC1"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
                  [medley "0.6.0"]
                  [com.stuartsierra/component "0.2.3"]
