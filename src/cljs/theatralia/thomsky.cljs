@@ -17,19 +17,35 @@
      (reset-meta! app-db (meta conn)))))
 
 ;;; Credits:
-;;;  - https://gist.github.com/allgress/11348685 (Using it on silent permission.
-;;;    – I've asked in two places and they didn't respond. Also it appears not
-;;;    to be as fast as it could be, as can be read in
-;;;    https://groups.google.com/d/topic/clojurescript/o0W57ptvPc8/discussion.
-;;;    But right now I don't understand what's written there. If the UI turns up
-;;;    performance problems, I will look into this.)
+;;;  - https://gist.github.com/allgress/11348685, see here for a bit more
+;;;    discussion:
+;;;    https://groups.google.com/d/topic/clojurescript/o0W57ptvPc8/discussion
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/middleware.cljs
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljs
 
+;; Note:
+;;
+;; If the application is getting slow, your first step towards a diagnosis
+;; should be to uncomment the line below and watch in the console when and how
+;; often bind is called. – If it only gets cold as many times as there are binds
+;; in the code and only on application load, your problem lies something else.
+;; If it gets called more often than that and while the application runs (for
+;; example, when you click or type), there are two likely causes:
+;;
+;;  - You've wrapped a call to bind in a reagent.ratom/reaction. In this case
+;;    bind gets called whenever the app-db changes, which is not what you want.
+;;
+;;  - You've used a Form-1 component where you should use a Form-2 component.
+;;    See https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components.
+;;
+;; If it wasn't repeated bind calls, you might want to filter out scratch
+;; changes. At tag filter-scratch you can find a change that introduced that,
+;; but wasn't needed at the time.
 (defn bind
   "Returns a ratom containing the result of query Q on the value of the database
-  behind CONN. Pass STATE if you want to use an existing ratom."
+  behind CONN with the arguments Q-ARGS."
   [q conn & q-args]
+  ;(println "bind called" q) ; Commented out on purpose. – See note above.
   (let [k (uuid/make-random-uuid)
         state (reagent/atom nil)
         res (apply d/q q @conn q-args)]

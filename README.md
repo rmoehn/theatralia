@@ -173,6 +173,10 @@ coming from such a live specification rather than being hard-coded. Of course a
 first step could also be putting these things in a configuration file or
 something similar.
 
+## Common abbreviations in the code
+
+ - suffix "ra": ratom, reactive atom
+
 ## License
 
 See [LICENSE.txt](https://github.com/rmoehn/theatralia/blob/master/LICENSE.txt).
