@@ -29,6 +29,7 @@
                  [garden "1.2.5"]
                  [enlive "1.1.5"]
                  [kioo "0.4.1-20150314.121103-8" :exclusions [org.clojure/clojure]]
+                 [cljs-ajax "0.3.13"]
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.1"]
                  [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
                  [datascript "0.11.3"]
