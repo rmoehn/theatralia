@@ -3,7 +3,6 @@
             datascript.core
             [cljs-uuid-utils.core :as uuid]
             [re-frame.core :as rf]
-            [re-frame.utils :as rf-utils]
             [re-frame.handlers :as handlers]
             [re-frame.middleware :as middleware]
             [plumbing.core :refer [safe-get]]
@@ -30,18 +29,21 @@
 (defn bind
   "Returns a ratom containing the result of query Q on the value of the database
   behind CONN. Pass STATE if you want to use an existing ratom."
-  ([conn q]
-   (bind conn q (reagent/atom nil)))
-  ([conn q state]
-   (let [k (uuid/make-random-uuid)]
-     (reset! state (d/q q @conn))
-     (d/listen! conn k (fn [tx-report]
-                         (let [novelty (d/q q (:tx-data tx-report))]
-                           ;; Only update if query results actually changed.
-                           (when (not-empty novelty)
-                             (reset! state (d/q q (:db-after tx-report)))))))
-     (set! (.-__key state) k)
-     state)))
+  [q conn & q-args]
+  (let [k (uuid/make-random-uuid)
+        state (reagent/atom nil)
+        res (apply d/q q @conn q-args)]
+    (reset! state res)
+    (d/listen!
+      conn
+      k
+      (fn [tx-report]
+        (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
+          ;; Only update if query results actually changed.
+          (when (not-empty novelty)
+            (reset! state (apply d/q q (:db-after tx-report) q-args))))))
+    (set! (.-__key state) k)
+    state))
 
 (defn unbind
   "Stops updates on ratom STATE from changes in CONN."
