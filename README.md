@@ -37,6 +37,7 @@ references to external documentation. We have these things:
     – Shows how to set up the system for development.
  3. [`doc/running-production.md`](https://github.com/rmoehn/theatralia/blob/master/doc/running-production.md)
     – Shows how to set up the system for production.
+ 5. The [FAQ](FAQ.md). As of now contains only one question and answer.
 
 If you miss something or feel that after reading a section you don't
 understand more than before, please open an issue or fix it yourself.
