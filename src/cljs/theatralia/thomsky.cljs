@@ -25,7 +25,8 @@
 
 (defn bind
   "Returns a ratom containing the result of query Q on the value of the database
-  behind CONN. Pass STATE if you want to use an existing ratom."
+  behind CONN with the arguments Q-ARGS. Queries containing clauses with the
+  attribute :scratch/val are not supported."
   [q conn & q-args]
   (let [k (uuid/make-random-uuid)
         state (reagent/atom nil)
@@ -36,12 +37,9 @@
       k
       (fn [tx-report]
         (let [tx-data (:tx-data tx-report)
-              scratch-change? (d/q '[:find ?e .
-                                     :where [?e :scratch/val _]]
-                                   tx-data)]
+              scratch-change? (some #(= :scratch/val (get % :a)) tx-data)]
           (when-not scratch-change?
-            (println "Wasn't scratch change: " tx-data)
-            (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
+            (let [novelty (apply d/q q tx-data q-args)]
               ;; Only update if query results actually changed.
               (when (not-empty novelty)
                 (reset! state (apply d/q q (:db-after tx-report) q-args))))))))
