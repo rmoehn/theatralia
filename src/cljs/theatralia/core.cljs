@@ -48,13 +48,10 @@
 
 (th-utils/register-handler* set-current-text)
 
-(defn search-submitted [db [scratch-key]]
+(defn search-submitted [db [scratch-entid]]
   (let [search-string
-        ,,(get (d/q '[:find ?m .
-                      :in $ ?sk
-                      :where [?e :scratch/key ?sk]
-                      [?e :scratch/val ?m]]
-                    db scratch-key) "searchInput")
+        ,,(get-in (d/pull db [:scratch/val] scratch-entid)
+                  [:scratch/val "searchInput"])
         url (str "/gq/" (th-utils/url-encode search-string))]
     (when search-string
       (ajax/GET url
@@ -109,42 +106,61 @@
 ;;    with Datascript, I guess. Oh, it does. It's just the view.
 ;;  - But we don't need
 
-(defn get-scratch-val [conn [_ scratch-key]]
-  (reaction (or @(tsky/bind '[:find ?m .
+;; Now the problem is that the query is slow. How can we make it faster? By not
+;; using a query.
+;;
+;;  - The scratch key has to be or contain the entity ID.
+;;  - We only get an entity ID from the database.
+;;  - We only get something from the database through a subscription.
+;;  - We only create an entity in the database after we transacted something
+;;    into it.
+;;  - So we have to transact the empty scratch space into the database.
+;;  - How can we subscribe to its entity ID?
+
+(defn get-scratch-entid [conn [_ scratch-key]]
+  (reaction (or @(tsky/bind '[:find ?e .
                               :in $ ?key
-                              :where [?e :scratch/key ?key]
-                                     [?e :scratch/val ?m]]
+                              :where [?e :scratch/key ?key]]
                             conn scratch-key)
-                {})))
+                nil)))
+(th-utils/register-sub* get-scratch-entid)
+
+(defn get-scratch-val [conn [_ scratch-entid]]
+  (reaction
+    (safe-get (d/pull @conn [:scratch/val] scratch-entid) :scratch/val)))
 (th-utils/register-sub* get-scratch-val)
 
-(defn set-scratch-val [db [scratch-key k v]]
-  {:pre [scratch-key k v]}
-  (let [[entid m]
-        (d/q '[:find [?e ?m]
-                      :in $ ?sk
-                      :where [?e :scratch/key ?sk]
-                             [?e :scratch/val ?m]]
-                    db scratch-key)]
-    [{:db/id (or entid -1)
-      :scratch/key scratch-key
+(defn new-scratch [_ [scratch-key]]
+  [{:db/id -1
+    :scratch/key scratch-key
+    :scratch/val {}}])
+(th-utils/register-handler* new-scratch)
+
+(defn set-scratch-val [db [scratch-entid k v]]
+  {:pre [scratch-entid k v]}
+  (let [{m :scratch-val}
+        (d/pull db [:scratch/val] scratch-entid)]
+    [{:db/id scratch-entid
       :scratch/val (assoc (or m {}) k v)}]))
 (th-utils/register-handler* set-scratch-val)
 
-;; Instead of a completely random UUID we could also take an argument to use as
-;; prefix and then a random number. Or just the provided scratch-key, but then
-;; we'd have to do check for collisions, which could be ugly.
+;; Instead of a random SQUUID we could also take an argument to use as prefix
+;; and then a random number. Or just the provided scratch-key, but then we'd
+;; have to do check for collisions, which could be ugly.
 (defn get-scratch []
-  (let [scratch-key (uuid/make-random-uuid)]
-    [scratch-key (rf/subscribe [:get-scratch-val scratch-key])]))
+  (let [scratch-key (uuid/make-random-squuid)]
+    (rf/dispatch-sync [:new-scratch scratch-key])
+    (let [scratch-entid @(rf/subscribe [:get-scratch-entid scratch-key])
+          scratch-val-ra (rf/subscribe [:get-scratch-val scratch-entid])]
+      [scratch-entid scratch-val-ra])))
 
-(defn bind-and-set-attr [[scratch-key scratch-ratom] & attrs]
+(defn bind-and-set-attr [[scratch-id scratch-ratom] & attrs]
   {:pre [(even? (count attrs))]}
   (fn [node]
     (let [id (plumbing/safe-get-in node [:attrs :id])
           default-attrs
           [:value (get @scratch-ratom id "")
-           :onChange #(rf/dispatch [:set-scratch-val scratch-key id (value %)])]]
+           :onChange #(rf/dispatch [:set-scratch-val scratch-id id (value %)])]]
       ((apply kioo/set-attr
               (concat default-attrs attrs)) node))))
 
@@ -169,8 +185,9 @@
       {[:ol] (kioo/content (map result-item @results-ra))})))
 
 (defn search-view []
+  (println "Rendering search-view")
   (let [scratch (get-scratch)]
-    (fn []
+    (fn search-view-infn []
       (kioo/component "templates/sandbox.html" [:#search-field]
         {[:#searchInput]
          (bind-and-set-attr
@@ -203,9 +220,13 @@
 
   (d/q '[:find ?t :where [?e :search-result ?t]] @re-frame.db/app-db)
 
+  (d/transact! re-frame.db/app-db (set-scratch-val @re-frame.db/app-db [1 :a 4]))
+
+(set-scratch-val @re-frame.db/app-db [1 :a 4])
+
   @(get-current-text db/app-db [:bla "search-field"])
 
-  @(def ra (rf/subscribe [:get-scratch-val :search-view]))
+  @(def ra (rf/subscribe [:get-scratch-val 1]))
 
   (get-scratch :search-view)
 

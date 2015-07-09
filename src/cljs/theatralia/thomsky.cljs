@@ -17,12 +17,9 @@
      (reset-meta! app-db (meta conn)))))
 
 ;;; Credits:
-;;;  - https://gist.github.com/allgress/11348685 (Using it on silent permission.
-;;;    – I've asked in two places and they didn't respond. Also it appears not
-;;;    to be as fast as it could be, as can be read in
-;;;    https://groups.google.com/d/topic/clojurescript/o0W57ptvPc8/discussion.
-;;;    But right now I don't understand what's written there. If the UI turns up
-;;;    performance problems, I will look into this.)
+;;;  - https://gist.github.com/allgress/11348685, see here for a bit more
+;;;    discussion:
+;;;    https://groups.google.com/d/topic/clojurescript/o0W57ptvPc8/discussion
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/middleware.cljs
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljs
 
@@ -38,10 +35,16 @@
       conn
       k
       (fn [tx-report]
-        (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
-          ;; Only update if query results actually changed.
-          (when (not-empty novelty)
-            (reset! state (apply d/q q (:db-after tx-report) q-args))))))
+        (let [tx-data (:tx-data tx-report)
+              scratch-change? (d/q '[:find ?e .
+                                     :where [?e :scratch/val _]]
+                                   tx-data)]
+          (when-not scratch-change?
+            (println "Wasn't scratch change: " tx-data)
+            (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
+              ;; Only update if query results actually changed.
+              (when (not-empty novelty)
+                (reset! state (apply d/q q (:db-after tx-report) q-args))))))))
     (set! (.-__key state) k)
     state))
 
