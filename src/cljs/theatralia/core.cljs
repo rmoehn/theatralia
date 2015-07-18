@@ -145,9 +145,10 @@
 
   eid is the ID of the scratch entity. It has at least one attribute,
   :scratch/key, a unique key which identifies it. Being a scratch space, you can
-  attach arbitrary other attributes to it. Their values should probably be
-  scalar, but you might try collections. I'm not sure about this. See also
-  https://github.com/tonsky/datascript/issues/69.
+  attach arbitrary other attributes to it. If you get problems with attribute
+  values that are collections, have a look at
+  https://github.com/tonsky/datascript/issues/69 and at the mayhem around commit
+  078546e9.
 
   ratom is a reactive atom holding all the attributes of the scratch entity."
   []
