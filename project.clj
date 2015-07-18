@@ -1,8 +1,7 @@
 (defproject theatralia "0.1.2-SNAPSHOT"
   ;; Note that I'm too lazy to update this version number everytime I tag a
   ;; commit in order to be deployed to the web server. See also the README.
-  ;; Umm, maybe I should read this stuff about semantic versioning, though.
-  ;; TODO: Read about semantic versioning.
+  ;; TODO: Think about deployment and versioning strategy.
   :description "A research notebook web application"
   :url "https://github.com/rmoehn/theatralia"
   :license {:name "MIT License"
@@ -33,7 +32,7 @@
                  [cljs-ajax "0.3.13"]
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
                  [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
-                 [datascript "0.11.3"]
+                 [datascript "0.11.5"]
                  [beckon "0.1.1"]]
 
   :plugins [[lein-ring "0.9.4"]
