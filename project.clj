@@ -12,23 +12,28 @@
                                    :username [:gpg :env/datomic_username]
                                    :password [:gpg :env/datomic_passphrase]}}
 
-  :dependencies [[org.clojure/clojure "1.7.0-RC1"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
                  [medley "0.6.0"]
                  [com.stuartsierra/component "0.2.3"]
                  [com.taoensso/timbre "3.4.0"]
                  [slingshot "0.12.2"]
                  [dire "0.5.3"]
+                 [prismatic/plumbing "0.4.4"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [om "0.8.0-rc1"]
-                 [om-sync "0.1.1"]
+                 [reagent "0.5.0"]
+                 [re-frame "0.4.1"]
                  [ring "1.3.2"]
                  [fogus/ring-edn "0.3.0"]
                  [compojure "1.3.4"]
                  [garden "1.2.5"]
                  [enlive "1.1.5"]
                  [kioo "0.4.1-20150314.121103-8" :exclusions [org.clojure/clojure]]
+                 [com.cemerick/url "0.1.1"]
+                 [cljs-ajax "0.3.13"]
+                 [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
                  [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
+                 [datascript "0.11.3"]
                  [beckon "0.1.1"]]
 
   :plugins [[lein-ring "0.9.4"]
@@ -79,4 +84,6 @@
               :compiler {
                 :output-to "resources/public/js/main.min.js"
                 :pretty-print false
-                :optimizations :advanced}}]})
+                :optimizations :advanced}}]}
+
+  :repl-options {:timeout 120000})
