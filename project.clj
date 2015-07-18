@@ -85,4 +85,4 @@
                 :pretty-print false
                 :optimizations :advanced}}]}
 
-  :repl-options {:timeout 120000})
+  :repl-options {:timeout 180000})
