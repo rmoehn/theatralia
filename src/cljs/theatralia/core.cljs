@@ -49,6 +49,12 @@
   [text-change-event]
   (-> text-change-event .-target .-value))
 
+(defn pull-single
+  "Same as (safe-get (pull db [attr] eid) attr), i. e. it saves you from typing
+  the extra map lookup and, especially, mistyping the second occurence of ATTR."
+  [db attr eid]
+  (safe-get (d/pull db [attr] eid) attr))
+
 
 ;;;; Event handlers
 
@@ -57,8 +63,7 @@
 (defn search-submitted
   "Send XHR searching for materials."
   [db [scratch-entid]]
-  (let [search-string (get-in (d/pull db [:scratch/val] scratch-entid)
-                              [:scratch/val "searchInput"])
+  (let [search-string (pull-single db :searchInput scratch-entid)
         url (str "/gq/" (th-utils/url-encode search-string))]
     (when search-string
       (ajax/GET url
@@ -88,19 +93,16 @@
   "Install scratch area with SCRATCH-KEY as its :scratch/key attribute's value."
   [_ [scratch-key]]
   [{:db/id -1
-    :scratch/key scratch-key
-    :scratch/val {}}])
+    :scratch/key scratch-key}])
 (th-utils/register-handler* new-scratch)
 
 (defn set-scratch-val
   "Set V as the value of key K in the scratch area indentified by
   SCRATCH-ENTID."
   [db [scratch-entid k v]]
-  {:pre [scratch-entid k v]}
-  (let [{m :scratch-val}
-        (d/pull db [:scratch/val] scratch-entid)]
-    [{:db/id scratch-entid
-      :scratch/val (assoc (or m {}) k v)}]))
+  {:pre [scratch-entid (keyword? k)]}
+  [{:db/id scratch-entid
+    k v}])
 (th-utils/register-handler* set-scratch-val)
 
 
@@ -108,20 +110,21 @@
 
 (defn get-scratch-entid
   "Entity ID of the scratch area with SCRATCH-KEY as the value of its
-  :scratch/key attribute."
+  :scratch/key attribute. Assumes that this scratch area already exists."
   [conn [_ scratch-key]]
-  (tsky/bind '[:find ?e .
-               :in $ ?key
-               :where [?e :scratch/key ?key]]
-             conn scratch-key))
+  (let [r (tsky/bind '[:find ?e .
+                       :in $ ?key
+                       :where [?e :scratch/key ?key]]
+                     conn scratch-key)]
+    (assert @r)
+    r))
 (th-utils/register-sub* get-scratch-entid)
 
-(defn get-scratch-val
-  "Scratch area with entity ID SCRATCH-ENTID."
+(defn get-scratch-contents
+  "Contents of scratch area with entity ID SCRATCH-ENTID."
   [conn [_ scratch-entid]]
-  (reaction
-    (safe-get (d/pull @conn [:scratch/val] scratch-entid) :scratch/val)))
-(th-utils/register-sub* get-scratch-val)
+  (reaction (d/pull @conn '[*] scratch-entid)))
+(th-utils/register-sub* get-scratch-contents)
 
 (defn search-result
   "Result of the material search."
@@ -138,16 +141,23 @@
 ;; and then a random number. Or just the provided scratch-key, but we'd have to
 ;; do check for collisions, which could be ugly.
 (defn get-scratch
-  "Adds a scratch area to the app-db and returns a pair [eid ratom]. eid is the
-  ID of an entity with two attributes: :scratch/key (a unique key identifying
-  this scratch area) and :scratch/val (a map, the scratch area itself). ratom is
-  a reactive atom holding the current value of :scratch/val."
+  "Adds a scratch entity to the app-db and returns a pair [eid ratom].
+
+  eid is the ID of the scratch entity. It has at least one attribute,
+  :scratch/key, a unique key which identifies it. Being a scratch space, you can
+  attach arbitrary other attributes to it. Their values should probably be
+  scalar, but you might try collections. I'm not sure about this. See also
+  https://github.com/tonsky/datascript/issues/69.
+
+  ratom is a reactive atom holding all the attributes of the scratch entity."
   []
   (let [scratch-key (uuid/make-random-squuid)]
     (rf/dispatch-sync [:new-scratch scratch-key])
     (let [scratch-entid @(rf/subscribe [:get-scratch-entid scratch-key])
-          scratch-val-ra (rf/subscribe [:get-scratch-val scratch-entid])]
-      [scratch-entid scratch-val-ra])))
+
+          scratch-contents-ra
+          (rf/subscribe [:get-scratch-contents scratch-entid])]
+      [scratch-entid scratch-contents-ra])))
 
 (defn dispatch-scratch
   "Convenience fn around rf/dispatch. Suppose s is what (get-scratch) returned.
@@ -166,7 +176,7 @@
   [[scratch-id scratch-ratom] & attrs]
   {:pre [(even? (count attrs))]}
   (fn [node]
-    (let [id (plumbing/safe-get-in node [:attrs :id])
+    (let [id (keyword (plumbing/safe-get-in node [:attrs :id]))
           default-attrs
           [:value (get @scratch-ratom id "")
            :onChange #(rf/dispatch [:set-scratch-val scratch-id id (value %)])]]
