@@ -187,6 +187,8 @@
 
 ;;;; Views
 
+;;; For the search view
+
 (defn result-item
   "One item of the material search results."
   [[id title _]]
@@ -220,12 +222,28 @@
          (kioo/set-attr :onClick #(dispatch-scratch [:search-submitted
                                                      scratch]))}))))
 
+;;; View for adding materials
+
+(defn add-material-view []
+  (let [scratch (get-scratch)]
+    (fn add-material-view-infn []
+      (kioo/component "templates/sandbox.html" [:#add-material-form]
+        {[:#newMatSubmit]
+         (kioo/set-attr
+           :onClick (fn [e]
+                      (.preventDefault e)
+                      (dispatch-scratch [:add-material scratch])))
+         [:.form-control] (bind-and-set-attr scratch)}))))
+
+;;; Root view
+
 (defn root-view
   "The application's high-level structure."
   []
   (kioo/component "templates/sandbox.html"
     {[:#search-field] (kioo/substitute [search-view])
-     [:#search-results] (kioo/substitute [result-view])}))
+     [:#search-results] (kioo/substitute [result-view])
+     [:#add-material-form] (kioo/substitute [add-material-view])}))
 
 
 ;;;; Entry point
