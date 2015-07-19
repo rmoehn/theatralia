@@ -177,6 +177,14 @@ something similar.
 
  - suffix "ra": ratom, reactive atom
 
+## (WIP) Testing
+
+Install Node dependencies:
+
+```shell
+$ npm install
+```
+
 ## License
 
 See [LICENSE.txt](https://github.com/rmoehn/theatralia/blob/master/LICENSE.txt).

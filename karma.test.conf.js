@@ -1,10 +1,13 @@
 // Karma configuration
+// Includes bits from
+// https://github.com/circleci/frontend/blob/master/karma.dev.conf.js.
+//
 
 var path = require('path');
 
 module.exports = function(config) {
 
-  var TEST_OUT = 'resources/public/cljs/test';
+  var TEST_OUT = 'resources/public/js/test';
 
   config.set({
     // frameworks to use
@@ -13,9 +16,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test-js/test-render-context.js',
-      'resources/public/assets/js/om-dev*.js', // everything but the compiled cljs
-      path.join(TEST_OUT, 'frontend-test.js')
+      path.join(TEST_OUT, 'goog/base.js'),
+      path.join(TEST_OUT, 'frontend-test.js'),
+      { pattern: path.join(TEST_OUT, '**/*.js'), included: false},
+      { pattern: path.join(TEST_OUT, '**/*.cljs'), included: false}
     ],
 
 
@@ -28,11 +32,6 @@ module.exports = function(config) {
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress', 'junit'],
-
-    junitReporter: {
-      outputFile: path.join(process.env.CIRCLE_TEST_REPORTS || '.', "karma", "junit.xml"),
-      suite: 'karma'
-    },
 
 
     // web server port
@@ -54,7 +53,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['Firefox'],
 
 
     // Continuous Integration mode

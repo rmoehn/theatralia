@@ -1,7 +1,6 @@
 (ns circle.karma
   (:require [clojure.string :as string]
-            [cemerick.cljs.test :as test])
-  (:require-macros [cemerick.cljs.test :as test]))
+            [cljs.test :as test :include-macros true]))
 
 (defn get-total-test-count []
   (reduce + (map count (vals @test/registered-tests))))
@@ -48,7 +47,7 @@
 
 (defn ^:export run-tests-for-karma []
   (.info js/__karma__ (clj->js {:total (get-total-test-count)}))
-  (doseq [[ns ns-tests] @test/registered-tests]
+  (doseq [[nmsp ns-tests] @test/registered-tests] ; <- This atom doesn't exist in cljs.test.
     (with-redefs [test/report report]
-      (test/test-ns ns)))
+      (test/test-ns nmsp)))
   (.complete js/__karma__ (clj->js {})))

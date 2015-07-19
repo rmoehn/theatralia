@@ -253,7 +253,8 @@
 
 ;;;; Entry point
 
-(def schema {:search-result {:db/cardinality :db.cardinality/many}})
+(def schema {:scratch/key {:db/unique :db.unique/identity}
+             :search-result {:db/cardinality :db.cardinality/many}})
 
 (rf/dispatch-sync [:initialize schema])
 (reagent/render [root-view]

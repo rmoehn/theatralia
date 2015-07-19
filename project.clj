@@ -43,10 +43,14 @@
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
 
+  ;; REVIEW: Not sure if listing all these paths is necessary. Shouldn'
+  ;;         resources/public/js be enough? (RM 2015-07-19)
   :clean-targets  ^{:protect false} [:target-path
                                      "resources/public/js/out"
                                      "resources/public/js/main.js"
-                                     "resources/public/js/main.min.js"]
+                                     "resources/public/js/main.min.js"
+                                     "resources/public/js/test"
+                                     "resources/public/js/test/frontend-test.js"]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
@@ -63,8 +67,8 @@
 
   :hooks [leiningen.cljsbuild]
 
-  :cljsbuild {
-    :builds [{:id "dev"
+  :cljsbuild
+  {:builds [{:id "dev"
               :source-paths ["src/cljs"]
               :figwheel true
               :compiler {
@@ -83,6 +87,16 @@
               :compiler {
                 :output-to "resources/public/js/main.min.js"
                 :pretty-print false
-                :optimizations :advanced}}]}
+                :optimizations :advanced}}
+             {:id "test"
+              :source-paths  ["src/cljs" "test/cljs"]
+              :compiler  {:pretty-print true
+                          :optimizations :none
+                          :output-to "resources/public/js/test/frontend-test.js"
+                          :output-dir "resources/public/js/test"
+                          :source-map "resources/public/js/test/sourcemap-test.js"}}]
+   :test-commands {"frontend-unit-tests"
+                   ["node_modules/karma/bin/karma"
+                    "start" "karma.test.conf.js" "--single-run"]}}
 
   :repl-options {:timeout 180000})
