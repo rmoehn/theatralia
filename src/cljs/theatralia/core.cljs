@@ -61,16 +61,21 @@
 ;; FIXME: Server errors when the search string starts with */%2a. (RM
 ;;        2015-07-09)
 (defn search-submitted
-  "Send XHR searching for materials."
+  "Send XHR searching for materials. Clear results of current search."
   [db [scratch-entid]]
   (let [search-string (pull-single db :searchInput scratch-entid)
-        url (str "/gq/" (th-utils/url-encode search-string))]
+        url (str "/gq/" (th-utils/url-encode search-string))
+        cur-search-result-eid (d/q '[:find ?e .
+                                     :where [?e :search-result _]]
+                                   db)]
     (when search-string
       (ajax/GET url
                 {:format :edn
                  :handler #(rf/dispatch [:search-returned %])
-                 :error-handler #(rf/dispatch [:request-errored url %])})))
-  [])
+                 :error-handler #(rf/dispatch [:request-errored url %])}))
+    (if cur-search-result-eid
+      [[:db.fn/retractEntity cur-search-result-eid]]
+      [])))
 (th-utils/register-handler* search-submitted)
 
 ;; TODO: Define a format somewhere. (RM 2015-07-02)
@@ -79,7 +84,7 @@
   [db [search-result]]
   (let [entid (d/q '[:find ?e . :where [?e :search-result _]] db)]
     [{:db/id (or entid -1)
-      :search-result search-result}]))
+      :search-result (set search-result)}]))
 (th-utils/register-handler* search-returned)
 
 (defn request-errored
@@ -129,7 +134,7 @@
 (defn search-result
   "Result of the material search."
   [db []]
-  (tsky/bind '[:find ?rs .
+  (tsky/bind '[:find [?rs ...]
                :where [_ :search-result ?rs]]
              db))
 (th-utils/register-sub* search-result)
@@ -248,6 +253,26 @@
 
 ;;;; Entry point
 
-(rf/dispatch-sync [:initialize])
+(def schema {:scratch/key {:db/unique :db.unique/identity}
+             :search-result {:db/cardinality :db.cardinality/many}})
+
+(rf/dispatch-sync [:initialize schema])
 (reagent/render [root-view]
                 (js/document.getElementById "app"))
+
+(comment
+
+  (in-ns 'theatralia.core)
+
+  @re-frame.db/app-db
+
+  (d/transact! re-frame.db/app-db
+             [{:db/id 5
+               :scratch/val "bla"
+               (keyword "blu") "bli"}])
+
+  (rf/dispatch [:set-scratch-val 1 :bla "blu"])
+
+  (def r (rf/subscribe [:get-scratch-val 1]))
+
+  )
