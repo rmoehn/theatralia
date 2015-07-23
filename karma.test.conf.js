@@ -16,10 +16,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'test-js/test-render-context.js',
       path.join(TEST_OUT, 'goog/base.js'),
       path.join(TEST_OUT, 'frontend-test.js'),
       { pattern: path.join(TEST_OUT, '**/*.js'), included: false},
-      { pattern: path.join(TEST_OUT, '**/*.cljs'), included: false}
+      { pattern: path.join(TEST_OUT, '**/*.cljs'), included: false},
+      'test-js/require-karma.js',
     ],
 
 
@@ -27,6 +29,12 @@ module.exports = function(config) {
     exclude: [
 
     ],
+
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+    'frontend-test.js': ['sourcemap']
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

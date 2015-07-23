@@ -13,6 +13,7 @@
 
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
+                 [com.cemerick/clojurescript.test "0.3.3"]
                  [medley "0.6.0"]
                  [com.stuartsierra/component "0.2.3"]
                  [com.taoensso/timbre "3.4.0"]
@@ -92,9 +93,10 @@
               :source-paths  ["src/cljs" "test/cljs"]
               :compiler  {:pretty-print true
                           :optimizations :none
+                          :asset-path "/js/test"
                           :output-to "resources/public/js/test/frontend-test.js"
                           :output-dir "resources/public/js/test"
-                          :source-map "resources/public/js/test/sourcemap-test.js"}}]
+                          :source-map true}}]
    :test-commands {"frontend-unit-tests"
                    ["node_modules/karma/bin/karma"
                     "start" "karma.test.conf.js" "--single-run"]}}

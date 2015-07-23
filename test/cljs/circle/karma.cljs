@@ -1,6 +1,6 @@
 (ns circle.karma
   (:require [clojure.string :as string]
-            [cljs.test :as test :include-macros true]))
+            [cemerick.cljs.test :as test :include-macros true]))
 
 (defn get-total-test-count []
   (reduce + (map count (vals @test/registered-tests))))
