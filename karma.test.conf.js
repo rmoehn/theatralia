@@ -17,11 +17,12 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'test-js/test-render-context.js',
-      path.join(TEST_OUT, 'goog/base.js'),
+      //path.join(TEST_OUT, 'goog/base.js'),
       path.join(TEST_OUT, 'frontend-test.js'),
-      { pattern: path.join(TEST_OUT, '**/*.js'), included: false},
-      { pattern: path.join(TEST_OUT, '**/*.cljs'), included: false},
-      'test-js/require-karma.js',
+      path.join(TEST_OUT, 'sourcemap-dev.js'),
+      //{ pattern: path.join(TEST_OUT, '**/*.js'), included: false},
+      //{ pattern: path.join(TEST_OUT, '**/*.cljs'), included: false},
+      //'test-js/require-karma.js',
     ],
 
 
@@ -45,6 +46,11 @@ module.exports = function(config) {
     // web server port
     port: 9876,
 
+    // Credits: https://github.com/karma-runner/karma/issues/682
+    //proxies: {
+    //    '/': 'http://localhost:17777/'
+    //},
+    //urlRoot: '/_karma_/',
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
@@ -52,7 +58,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -61,7 +67,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Firefox'],
+    //browsers: ['Firefox'],
 
 
     // Continuous Integration mode

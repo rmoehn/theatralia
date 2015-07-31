@@ -92,13 +92,17 @@
              {:id "test"
               :source-paths  ["src/cljs" "test/cljs"]
               :compiler  {:pretty-print true
-                          :optimizations :none
+                          :optimizations :advanced
                           :asset-path "/js/test"
                           :output-to "resources/public/js/test/frontend-test.js"
                           :output-dir "resources/public/js/test"
-                          :source-map true}}]
+                          :output-wrapper false
+                          :externs ["test-js/externs.js"]
+                          :source-map "resources/public/js/test/sourcemap-dev.js"}}]
    :test-commands {"frontend-unit-tests"
                    ["node_modules/karma/bin/karma"
-                    "start" "karma.test.conf.js" "--single-run"]}}
+                    "start" "karma.test.conf.js" #_"--single-run"]}}
+
+  :datadoc {:jar-coords {:group "org.clojars.rmoehn"}}
 
   :repl-options {:timeout 180000})
