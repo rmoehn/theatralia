@@ -23,6 +23,6 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 2 # give xvfb some time to start
   - "echo 'Installing Slimer'"
-  - "wget https://download.slimerjs.org/releases/0.9.6/slimerjs-0.9.6.zip"
+  - "wget --no-check-certificate https://download.slimerjs.org/releases/0.9.6/slimerjs-0.9.6.zip"
   - "unzip slimerjs-0.9.6.zip"
   - "mv slimerjs-0.9.6 ./slimerjs"
