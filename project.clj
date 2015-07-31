@@ -20,7 +20,8 @@
                  [dire "0.5.3"]
                  [prismatic/plumbing "0.4.4"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [reagent "0.5.0"]
+                 [reagent "0.5.0" :exclusions  [cljsjs/react]]
+                 [cljsjs/react-with-addons "0.13.3-0"]
                  [re-frame "0.4.1"]
                  [ring "1.3.2"]
                  [fogus/ring-edn "0.3.0"]
@@ -37,16 +38,21 @@
 
   :plugins [[lein-ring "0.9.4"]
             [lein-cljsbuild "1.0.6"]
-            [lein-figwheel "0.3.3"]]
+            [lein-figwheel "0.3.3"]
+            [com.cemerick/clojurescript.test "0.3.3"]]
 
   :source-paths ["src/clj" "src/cljs"]
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
 
+  ;; REVIEW: Not sure if listing all these paths is necessary. Shouldn't
+  ;;         resources/public/js be enough? (RM 2015-07-19)
   :clean-targets  ^{:protect false} [:target-path
                                      "resources/public/js/out"
                                      "resources/public/js/main.js"
-                                     "resources/public/js/main.min.js"]
+                                     "resources/public/js/main.min.js"
+                                     "resources/public/js/test"
+                                     "resources/public/js/test/test-main.js"]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies
@@ -62,6 +68,12 @@
   :uberjar-name "theatralia-%s.jar"
 
   :hooks [leiningen.cljsbuild]
+
+  ;;; Credits for test configuration:
+  ;;;  - https://github.com/cemerick/clojurescript.test/blob/master/project.clj
+  ;;;  - https://github.com/cemerick/clojurescript.test
+  ;;;  - https://noprompt.github.io/clojurescript/testing/ruby/2014/01/25/autotesting-clojurescript.html
+
 
   :cljsbuild
   {:builds [{:id "dev"
@@ -82,6 +94,19 @@
              :source-paths ["src/cljs"]
              :compiler {:output-to "resources/public/js/main.min.js"
                         :pretty-print false
-                        :optimizations :advanced}}]}
+                        :optimizations :advanced}}
+            {:id "test"
+             :source-paths ["src/cljs" "test/cljs"]
+             :compiler {:output-to "resources/public/js/test/test-main.js"
+                        :output-dir "resources/public/js/test"
+                        :optimizations :whitespace
+                        :cache-analysis true
+                        :pretty-print true
+                        :source-map "resources/public/js/test/source-maps.js"}
+             :notify-command ["xvfb-run" "-a" "slimerjs" :cljs.test/runner
+                              "resources/public/js/test/test-main.js"]}]
 
-  :repl-options {:timeout 180000})
+   :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" :runner
+                             "resources/public/js/test/test-main.js"]}}
+
+:repl-options {:timeout 180000})
