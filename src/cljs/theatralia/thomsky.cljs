@@ -16,9 +16,9 @@
                     (safe-get query :find)
                     (do
                       (assert (= :find (first query)))
-                      (take-while #(not (keyword %)) (rest query))))]
-    (or (and (vector? find-part)           ; single tuple
-             (not= '... (last find-part)))
+                      (take-while #(not (keyword? %)) (rest query))))]
+    (or (and (vector? (first find-part))   ; single tuple
+             (not= '... (last (first find-part))))
         (= '. (last find-part)))))         ; single scalar
 
 (defn set-up-datascript!
