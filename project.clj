@@ -63,26 +63,25 @@
 
   :hooks [leiningen.cljsbuild]
 
-  :cljsbuild {
-    :builds [{:id "dev"
-              :source-paths ["src/cljs"]
-              :figwheel true
-              :compiler {
-                ; Figwheel-specific things
-                :main theatralia.core
-                :asset-path "/js/out" ; Base URL for JS requests from browser.
-                :recompile-dependents true ; Speed doesn't matter right now.
+  :cljsbuild
+  {:builds [{:id "dev"
+             :source-paths ["src/cljs"]
+             :figwheel true
+             :compiler
+             {; Figwheel-specific things
+              :main theatralia.core
+              :asset-path "/js/out" ; Base URL for JS requests from browser.
+              :recompile-dependents true ; Speed doesn't matter right now.
 
-                :output-to "resources/public/js/main.js"
-                :output-dir "resources/public/js/out"
-                :optimizations :none
-                :cache-analysis true
-                :source-map true}}
-             {:id "release"
-              :source-paths ["src/cljs"]
-              :compiler {
-                :output-to "resources/public/js/main.min.js"
-                :pretty-print false
-                :optimizations :advanced}}]}
+              :output-to "resources/public/js/main.js"
+              :output-dir "resources/public/js/out"
+              :optimizations :none
+              :cache-analysis true
+              :source-map true}}
+            {:id "release"
+             :source-paths ["src/cljs"]
+             :compiler {:output-to "resources/public/js/main.min.js"
+                        :pretty-print false
+                        :optimizations :advanced}}]}
 
   :repl-options {:timeout 180000})
