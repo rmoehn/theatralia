@@ -1,10 +1,28 @@
+# Credits for CLJS test:
+#  - https://github.com/cemerick/clojurescript.test/blob/master/.travis.yml
+#  - http://docs.travis-ci.com/user/gui-and-headless-browsers/
+
+sudo: false
 language: clojure
 lein: lein2
 jdk:
 - openjdk7
 install: lein uberjar
-script: lein midje
+script:
+  - lein midje
+  - lein cljsbuild test slimer
 env:
   global:
+    - SLIMERJSLAUNCHER=$(which firefox) DISPLAY=:99.0 PATH=$TRAVIS_BUILD_DIR/slimerjs:$PATH
     - secure: T/IhDL1pTnE34x+4D96MTEt3TeDMPCIGc74VM3vt9qVhK6hEhZtkHZFDcEx9p0JGxJgwyVlUgiZFtlHZgXXcLYfcuEenSFsxknhvViVXJgCVcY7aFZqQRXtYKNzj6qDT0zg6zPLpi4qHnQ7YqzhlfBqbo4+dr73g8sUZG5ktohU=
     - secure: PssjNK8QDJZn60PEUwoBubLFNTJoGTLVBZMKE26ngWdeABH//Nszv85ejbxrJf0keZqmufqNkdwaAR/cBdbhpgj5A+GrHdLDow35h/qsHYg8AGcqmDzYh15LnzAZ5rcJ9MRo0DEwN4fG/AuG4ZS+yj+D7fGjNLYvcXmtPPwbPnk=
+addons:
+  firefox: "38.0"
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 2 # give xvfb some time to start
+  - "echo 'Installing Slimer'"
+  - "wget https://download.slimerjs.org/releases/0.9.6/slimerjs-0.9.6.zip"
+  - "unzip slimerjs-0.9.6.zip"
+  - "mv slimerjs-0.9.6 ./slimerjs"
