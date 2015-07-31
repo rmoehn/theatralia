@@ -8,6 +8,19 @@
             [plumbing.core :refer [safe-get]]
             [reagent.core :as reagent]))
 
+(defn- single-valued?
+  "See http://docs.datomic.com/query.html#find-specifications and
+  http://docs.datomic.com/query.html#query."
+  [query]
+  (let [find-part (if (map? query)
+                    (safe-get query :find)
+                    (do
+                      (assert (= :find (first query)))
+                      (take-while #(not (keyword %)) (rest query))))]
+    (or (and (vector? find-part)           ; single tuple
+             (not= '... (last find-part)))
+        (= '. (last find-part)))))         ; single scalar
+
 (defn set-up-datascript!
   "Swaps in a Datascript database with schema ?SCHEMA (default: Datascript
   default schema) for the APP-DB in re-frame. To be used as an event handler."
