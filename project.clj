@@ -12,7 +12,7 @@
                                    :password [:gpg :env/datomic_passphrase]}}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "0.0-3308"]
+                 [org.clojure/clojurescript "1.7.48"]
                  [medley "0.6.0"]
                  [com.stuartsierra/component "0.2.3"]
                  [com.taoensso/timbre "3.4.0"]
