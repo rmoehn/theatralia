@@ -100,7 +100,6 @@
                         :pretty-print true}}]
 
    :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" "phantom/unit-test.js"
-                             "phantom/unit-test.html"
                              "resources/public/js/test/test-main.js"]}}
 
 :repl-options {:timeout 180000})
