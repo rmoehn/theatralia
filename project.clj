@@ -65,7 +65,7 @@
 
   :cljsbuild
   {:builds [{:id "dev"
-             :source-paths ["src/cljs"]
+             :source-paths ["src/cljs" "test/cljs"]
              :figwheel true
              :compiler
              {; Figwheel-specific things

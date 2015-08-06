@@ -1,5 +1,5 @@
-(ns theatralia.t-thomsky
-  (:require [cemerick.cljs.test :refer-macros [deftest is are run-tests]]
+(ns ^:figwheel-load theatralia.t-thomsky
+  (:require [cljs.test :refer-macros [deftest is are run-tests]]
             [theatralia.thomsky :as tsky]))
 
 ;;; Credits: @#' swearing in order to access private vars is recommended here:
