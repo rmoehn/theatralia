@@ -60,7 +60,7 @@
                     [org.clojure/tools.namespace "0.2.10"]]
                    :plugins
                    [[lein-midje "3.1.3"]
-                    [com.cemerick/clojurescript.test "0.3.3"]]}
+                    [lein-doo "0.1.4-SNAPSHOT"]]}
              :uberjar {:main theatralia.core
                        :aot [theatralia.core]}}
 
@@ -99,14 +99,12 @@
              :source-paths ["src/cljs" "test/cljs"]
              :compiler {:output-to "resources/public/js/test/test-main.js"
                         :output-dir "resources/public/js/test"
-                        :optimizations :whitespace
-                        :cache-analysis true
-                        :pretty-print true
-                        :source-map "resources/public/js/test/source-maps.js"}
-             :notify-command ["xvfb-run" "-a" "slimerjs" :cljs.test/runner
+                        :main 'theatralia.t-runner
+                        :optimizations :whitespace}
+             #_:notify-command #_["xvfb-run" "-a" "slimerjs" :cljs.test/runner
                               "resources/public/js/test/test-main.js"]}]
 
-   :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" :runner
+   #_:test-commands #_{"slimer" ["xvfb-run" "-a" "slimerjs" :runner
                              "resources/public/js/test/test-main.js"]}}
 
 :repl-options {:timeout 180000})
