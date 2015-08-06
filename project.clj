@@ -76,7 +76,7 @@
 
 
   :cljsbuild
-  {:builds [{:id "dev"
+  {:builds [#_{:id "dev"
              :source-paths ["src/cljs"]
              :figwheel true
              :compiler
@@ -90,7 +90,7 @@
               :optimizations :none
               :cache-analysis true
               :source-map true}}
-            {:id "release"
+            #_{:id "release"
              :source-paths ["src/cljs"]
              :compiler {:output-to "resources/public/js/main.min.js"
                         :pretty-print false
@@ -100,11 +100,7 @@
              :compiler {:output-to "resources/public/js/test/test-main.js"
                         :output-dir "resources/public/js/test"
                         :optimizations :whitespace
-                        :cache-analysis true
-                        :pretty-print true
-                        :source-map "resources/public/js/test/source-maps.js"}
-             :notify-command ["xvfb-run" "-a" "slimerjs" :cljs.test/runner
-                              "resources/public/js/test/test-main.js"]}]
+                        :pretty-print true}}]
 
    :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" :runner
                              "resources/public/js/test/test-main.js"]}}
