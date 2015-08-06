@@ -1,6 +1,5 @@
 (ns theatralia.t-thomsky
-  (:require-macros cemerick.cljs.test)
-  (:require [cemerick.cljs.test :as t]
+  (:require [cljs.test :refer-macros [deftest are]]
             [theatralia.thomsky :as tsky]))
 
 ;;; Credits: @#' swearing in order to access private vars is recommended here:
@@ -11,8 +10,8 @@
 
 ;; These are most of the queries from http://docs.datomic.com/query.html. Errm,
 ;; couldn't stop myself…
-(t/deftest test-single-valued?
-  (t/are [b q] (= b (@#'tsky/single-valued? q))
+(deftest test-single-valued?
+  (are [b q] (= b (@#'tsky/single-valued? q))
        true '[:find ?e . :where [?e :attr _]]
        true '{:find [[?year ?month ?day]]
               :in [$ ?name]

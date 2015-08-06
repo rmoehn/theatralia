@@ -20,8 +20,7 @@
                  [dire "0.5.3"]
                  [prismatic/plumbing "0.4.4"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [reagent "0.5.0" :exclusions  [cljsjs/react]]
-                 [cljsjs/react-with-addons "0.13.3-0"]
+                 [reagent "0.5.0"]
                  [re-frame "0.4.1"]
                  [ring "1.3.2"]
                  [fogus/ring-edn "0.3.0"]
@@ -59,8 +58,7 @@
                     [org.clojure/test.check "0.7.0"]
                     [org.clojure/tools.namespace "0.2.10"]]
                    :plugins
-                   [[lein-midje "3.1.3"]
-                    [com.cemerick/clojurescript.test "0.3.3"]]}
+                   [[lein-midje "3.1.3"]]}
              :uberjar {:main theatralia.core
                        :aot [theatralia.core]}}
 
@@ -98,11 +96,11 @@
             {:id "test"
              :source-paths ["src/cljs" "test/cljs"]
              :compiler {:output-to "resources/public/js/test/test-main.js"
-                        :output-dir "resources/public/js/test"
                         :optimizations :whitespace
                         :pretty-print true}}]
 
-   :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" :runner
+   :test-commands {"slimer" ["xvfb-run" "-a" "slimerjs" "phantom/unit-test.js"
+                             "phantom/unit-test.html"
                              "resources/public/js/test/test-main.js"]}}
 
 :repl-options {:timeout 180000})
