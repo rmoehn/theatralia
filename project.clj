@@ -38,8 +38,7 @@
 
   :plugins [[lein-ring "0.9.4"]
             [lein-cljsbuild "1.0.6"]
-            [lein-figwheel "0.3.3"]
-            [com.cemerick/clojurescript.test "0.3.3"]]
+            [lein-figwheel "0.3.3"]]
 
   :source-paths ["src/clj" "src/cljs"]
   :test-paths ["test/clj"]
@@ -60,7 +59,8 @@
                     [org.clojure/test.check "0.7.0"]
                     [org.clojure/tools.namespace "0.2.10"]]
                    :plugins
-                   [[lein-midje "3.1.3"]]}
+                   [[lein-midje "3.1.3"]
+                    [com.cemerick/clojurescript.test "0.3.3"]]}
              :uberjar {:main theatralia.core
                        :aot [theatralia.core]}}
 
