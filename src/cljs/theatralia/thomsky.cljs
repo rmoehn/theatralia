@@ -8,19 +8,6 @@
             [plumbing.core :refer [safe-get]]
             [reagent.core :as reagent]))
 
-(defn- single-valued?
-  "See http://docs.datomic.com/query.html#find-specifications and
-  http://docs.datomic.com/query.html#query."
-  [query]
-  (let [find-part (if (map? query)
-                    (safe-get query :find)
-                    (do
-                      (assert (= :find (first query)))
-                      (take-while #(not (keyword? %)) (rest query))))]
-    (or (and (vector? (first find-part))   ; single tuple
-             (not= '... (last (first find-part))))
-        (= '. (last find-part)))))         ; single scalar
-
 (defn set-up-datascript!
   "Swaps in a Datascript database with schema ?SCHEMA (default: Datascript
   default schema) for the APP-DB in re-frame. To be used as an event handler."
@@ -63,14 +50,11 @@
         state (reagent/atom nil)
         res (apply d/q q @conn q-args)]
     (reset! state res)
-    (d/listen!
-      conn
-      k
-      (fn [tx-report]
-        (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
-          ;; Only update if query results actually changed.
-          (when (not-empty novelty)
-            (reset! state (apply d/q q (:db-after tx-report) q-args))))))
+    (d/listen! conn k
+               (fn [tx-report]
+                 (let [new-result (apply d/q q (:db-after tx-report) q-args)]
+                   (when (not= new-result @state)
+                     (reset! state new-result)))))
     (set! (.-__key state) k)
     state))
 
