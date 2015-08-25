@@ -77,7 +77,7 @@
 
   :cljsbuild
   {:builds [{:id "dev"
-             :source-paths ["src/cljs"]
+             :source-paths ["src/cljs" "src/cljs-env"]
              :figwheel true
              :compiler
              {; Figwheel-specific things
@@ -91,7 +91,7 @@
               :cache-analysis true
               :source-map true}}
             {:id "release"
-             :source-paths ["src/cljs"]
+             :source-paths ["src/cljs" "src/cljs-env"]
              :compiler {:output-to "resources/public/js/main.min.js"
                         :pretty-print false
                         :optimizations :advanced}}
