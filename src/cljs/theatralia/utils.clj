@@ -17,7 +17,7 @@
 
   See the :voyt.ext/macro-requires in the extension metadata for a list of
   namespaces that have to be required in a namespace where this macro is used."
-  {:grenada.cmeta/extensions {:voyt.ext/requires ['theatralia.thomsky]}}
+  {:grenada.cmeta/bars {:voyt.ext/requires ['theatralia.thomsky]}}
   ([handler-sym] `(register-handler* ~handler-sym []))
   ([handler-sym middleware]
    `(do
@@ -40,7 +40,7 @@
 
   See the :voyt.ext/macro-requires in the extension metadata for a list of
   namespaces that have to be required in a namespace where this macro is used."
-  {:grenada.cmeta/extensions {:voyt.ext/requires ['re-frame.core]}}
+  {:grenada.cmeta/bars {:voyt.ext/requires ['re-frame.core]}}
   [handler-sym]
   `(do
      (re-frame.core/register-sub ~(keyword handler-sym)
