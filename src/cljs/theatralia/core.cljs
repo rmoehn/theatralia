@@ -110,6 +110,29 @@
     k v}])
 (th-utils/register-handler* set-scratch-val)
 
+(def tags-query '[:find ?index ?tag
+                  :where [?e :tag/index ?index]
+                         [?e :tag/content ?tag]])
+
+(defn new-tag
+  [db [index]]
+  (let [existing-tags (d/q tags-query db)]
+    [{:db/id -1
+      :tag/index index
+      :tag/content ""}]))
+(th-utils/register-handler* new-tag)
+
+(defn remove-tag
+  [db [index]]
+  [[:db.fn/retractEntity [:tag/index index]]])
+(th-utils/register-handler* remove-tag)
+
+(defn tag-change
+  [db [index tag]]
+  [{:db/id [:tag/index index]
+    :tag/content tag}])
+(th-utils/register-handler* tag-change)
+
 
 ;;;; Subscription handlers
 
@@ -138,6 +161,12 @@
                :where [_ :search-result ?rs]]
              db))
 (th-utils/register-sub* search-result)
+
+(defn tags
+  [db []]
+  (let [query-res (tsky/bind tags-query db)]
+    (reaction (sort-by first @query-res))))
+(th-utils/register-sub* tags)
 
 
 ;;;; Fns for dealing with the scratch part of the database
@@ -229,6 +258,36 @@
 
 ;;; View for adding materials
 
+(defn tag-view [[index tag]]
+  (let [input-id (str "newMatTagInput" index)]
+    (kioo/component "templates/sandbox.html" [:#existing-tags :> first-child]
+      {[:label]
+       (kioo/do-> (kioo/set-attr :for input-id)
+                  (kioo/content (str "Tag " index)))
+
+       [:input]
+       (kioo/set-attr :id input-id
+                      :value tag
+                      :onChange #(rf/dispatch [:tag-change index (value %)])
+                      :onFocus #(when (empty? (value %))
+                                  (rf/dispatch [:new-tag index]))
+                      :onBlur #(when (empty? (value %))
+                                 (rf/dispatch [:remove-tag index])))})))
+
+(defn tag-inputs-view []
+  (let [tags-ra (rf/subscribe [:tags])
+        with-empty (reaction (-> @tags-ra
+                                 vec
+                                 (conj [(count @tags-ra) ""])))]
+    (fn tag-inputs-view-infn []
+      (kioo/component "templates/sandbox.html" [:#tag-list-group]
+        {[:#existing-tags]
+         (kioo/content (map tag-view @with-empty))
+
+         #_[:#empty-tag :input]
+         #_(kioo/set-attr :onChange #(rf/dispatch [:new-tag (value %)]))}))))
+
+;; TODO: On submit we have to remove duplicate tags. (RM 2015-08-26)
 (defn add-material-view []
   (let [scratch (get-scratch)]
     (fn add-material-view-infn []
@@ -238,7 +297,8 @@
            :onClick (fn [e]
                       (.preventDefault e)
                       (dispatch-scratch [:add-material scratch])))
-         [:.form-control] (bind-and-set-attr scratch)}))))
+         [:.simple-input] (bind-and-set-attr scratch)
+         [:#tag-list-group] (kioo/substitute [tag-inputs-view])}))))
 
 ;;; Root view
 
@@ -254,7 +314,8 @@
 ;;;; Entry point
 
 (def schema {:scratch/key {:db/unique :db.unique/identity}
-             :search-result {:db/cardinality :db.cardinality/many}})
+             :search-result {:db/cardinality :db.cardinality/many}
+             :tag/index {:db/unique :db.unique/identity}})
 
 (rf/dispatch-sync [:initialize schema])
 (reagent/render [root-view]
