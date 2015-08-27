@@ -3,8 +3,11 @@
             [datascript :as d]
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]
+            re-frame.handlers
+            [re-frame.utils :as rf-utils]
+            [theatralia.queries :as queries]
             [theatralia.thomsky :as tsky]
-            [theatralia.utils :as th-utils]))
+            [theatralia.utils :as th-utils :include-macros true]))
 
 ;;;; Various helpers
 
@@ -17,7 +20,7 @@
 
 ;;;; All the handlers
 
-(handlers/register-base :initialize tsky/set-up-datascript!)
+(re-frame.handlers/register-base :initialize tsky/set-up-datascript!)
 
 ;; FIXME: Server errors when the search string starts with */%2a. (RM
 ;;        2015-07-09)
@@ -71,13 +74,9 @@
     k v}])
 (th-utils/register-handler* set-scratch-val)
 
-(def tags-query '[:find ?index ?tag
-                  :where [?e :tag/index ?index]
-                         [?e :tag/content ?tag]])
-
 (defn new-tag
   [db [index]]
-  (let [existing-tags (d/q tags-query db)]
+  (let [existing-tags (d/q queries/tags-query db)]
     [{:db/id -1
       :tag/index index
       :tag/content ""}]))

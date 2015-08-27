@@ -8,6 +8,8 @@
             [reagent.core :as reagent]
             [re-frame.core :as rf]
             [theatralia.db :as db]
+            theatralia.handlers
+            theatralia.subs
             [theatralia.views :as views]))
 
 ;;; Credits:

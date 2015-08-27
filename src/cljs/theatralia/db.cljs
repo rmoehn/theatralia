@@ -7,4 +7,4 @@
 
 (def schema {:scratch/key {:db/unique :db.unique/identity}
              :search-result {:db/cardinality :db.cardinality/many}
-             :tag/index {:db/unique :db.unique/identity}
+             :tag/index {:db/unique :db.unique/identity}})

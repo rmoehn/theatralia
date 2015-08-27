@@ -1,6 +1,8 @@
 (ns theatralia.subs
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [theatralia.thomsky :as tsky]
+  (:require [datascript :as d]
+            [theatralia.queries :as queries]
+            [theatralia.thomsky :as tsky]
             [theatralia.utils :as th-utils :include-macros true]))
 
 (defn get-scratch-entid
@@ -31,6 +33,6 @@
 
 (defn tags
   [db []]
-  (let [query-res (tsky/bind tags-query db)]
+  (let [query-res (tsky/bind queries/tags-query db)]
     (reaction (sort-by first @query-res))))
 (th-utils/register-sub* tags)
