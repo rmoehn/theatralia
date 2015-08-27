@@ -33,7 +33,15 @@
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
                  [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
                  [datascript "0.11.5"]
-                 [beckon "0.1.1"]]
+                 [beckon "0.1.1"]
+
+                 ;; The following should somehow be thrown out of production
+                 ;; code.
+                 ;;
+                 ;; Credits: https://github.com/Day8/re-frame/wiki/Debugging
+                 [binaryage/devtools "0.3.0"]
+                 [day8/re-frame-tracer "0.1.0-SNAPSHOT"]
+                 [org.clojars.stumitchell/clairvoyant "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-ring "0.9.4"]
             [lein-cljsbuild "1.0.6"]
