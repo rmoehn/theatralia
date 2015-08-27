@@ -113,6 +113,7 @@
 
        [:input]
        (kioo/set-attr :id input-id
+                      :key index
                       :value tag
                       :onChange #(rf/dispatch [:tag-change index (value %)])
                       :onFocus #(when (empty? (value %))
