@@ -106,7 +106,7 @@
 
 (defn tag-view [[index tag]]
   (let [input-id (str "newMatTagInput" index)]
-    (kioo/component "templates/sandbox.html" [:#existing-tags :> first-child]
+    (kioo/component "templates/sandbox.html" [:.form-inline :> first-child]
       {[:label]
        (kioo/do-> (kioo/set-attr :for input-id)
                   (kioo/content (str "Tag " index)))
@@ -127,11 +127,8 @@
                                  (conj [(count @tags-ra) ""])))]
     (fn tag-inputs-view-infn []
       (kioo/component "templates/sandbox.html" [:#tag-list-group]
-        {[:#existing-tags]
-         (kioo/content (map tag-view @with-empty))
-
-         #_[:#empty-tag :input]
-         #_(kioo/set-attr :onChange #(rf/dispatch [:new-tag (value %)]))}))))
+        {[:.form-inline]
+         (kioo/content (map tag-view @with-empty))}))))
 
 ;; TODO: On submit we have to remove duplicate tags. (RM 2015-08-26)
 (defn add-material-view []
