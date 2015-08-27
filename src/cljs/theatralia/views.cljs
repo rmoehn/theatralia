@@ -7,6 +7,8 @@
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]))
 
+;;; Credits: https://github.com/ckirkendall/kioo
+
 ;;;; Various helpers
 
 (defn value

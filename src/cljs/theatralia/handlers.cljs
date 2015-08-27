@@ -3,7 +3,9 @@
             [datascript :as d]
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]
-            [theatralia.utils :as th-utils]))
+            [theatralia
+             [thomsky :as tsky]
+             [utils :as th-utils]]))
 
 ;;;; Various helpers
 
@@ -15,6 +17,8 @@
 
 
 ;;;; All the handlers
+
+(handlers/register-base :initialize tsky/set-up-datascript!)
 
 ;; FIXME: Server errors when the search string starts with */%2a. (RM
 ;;        2015-07-09)
