@@ -52,6 +52,7 @@
     (reset! state res)
     (d/listen! conn k
                (fn [tx-report]
+;                 (println tx-report)
                  (let [new-result (apply d/q q (:db-after tx-report) q-args)]
                    (when (not= new-result @state)
                      (reset! state new-result)))))

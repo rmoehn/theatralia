@@ -1,5 +1,6 @@
 (ns theatralia.views
-  (:require-macros [reagent.ratom :refer [reaction]])
+  (:require-macros [reagent.ratom :refer [reaction]]
+                   [plumbing.core :refer [fn->>]])
   (:require [cljs-uuid-utils.core :as uuid]
             kioo.core ; so that kioo/component won't cause warnings
             [kioo.reagent :as kioo :include-macros true]
@@ -11,10 +12,9 @@
 ;;;; Various helpers
 
 (defn value
-  "Returns the value of the input field whose change caused the
-  TEXT-CHANGE-EVENT."
-  [text-change-event]
-  (-> text-change-event .-target .-value))
+  "Returns the value of the input field whose change caused the EVENT."
+  [event]
+  (-> event .-target .-value))
 
 
 ;;;; Fns for dealing with the scratch part of the database
@@ -104,28 +104,42 @@
 
 ;;; View for adding materials
 
-(defn tag-view [[index tag]]
-  (let [input-id (str "newMatTagInput" index)]
+(defn tag-view [[serial-id tag]]
+  (let [input-id (str "newMatTagInput" serial-id)]
     (kioo/component "templates/sandbox.html" [:.form-inline :> first-child]
-      {[:label]
+      {[:*] (kioo/set-attr :key serial-id)
+
+       [:label]
        (kioo/do-> (kioo/set-attr :for input-id)
-                  (kioo/content (str "Tag " index)))
+                  (kioo/content (str "Tag with ID " serial-id)))
 
        [:input]
        (kioo/set-attr :id input-id
-                      :key index
                       :value tag
-                      :onChange #(rf/dispatch [:tag-change index (value %)])
+                      ;; Prevent forward-tabbing, because it doesn't make sense.
+                      :onKeyDown #(when (and (= (.-key %) "Tab")
+                                             (not (.-shiftKey %))
+                                             (empty? (value %)))
+                                    (.preventDefault %))
+                      :onChange #(rf/dispatch [:tag-change serial-id (value %)])
                       :onFocus #(when (empty? (value %))
-                                  (rf/dispatch [:new-tag index]))
+                                  (rf/dispatch [:new-tag serial-id]))
                       :onBlur #(when (empty? (value %))
-                                 (rf/dispatch [:remove-tag index])))})))
+                                 (rf/dispatch [:remove-tag serial-id])))})))
 
+;; TODO: Although we prevent forward-tabbing, the same problem occurs when the
+;;       user is on an empty tag input A and clicks on the empty tag B right of
+;;       it: the entry in the database for A is retracted. This state gets
+;;       rendered as an empty tag input E without database entry. Then the
+;;       :new-tag event causes an entry for B to be added to the database,
+;;       resulting in E being deleted and a new empty tag input C to appear.
+;;       Focus is lost because of the temporary existence of E, I think. Fix
+;;       this some time. (RM 2015-08-28)
 (defn tag-inputs-view []
   (let [tags-ra (rf/subscribe [:tags])
-        with-empty (reaction (-> @tags-ra
-                                 vec
-                                 (conj [(count @tags-ra) ""])))]
+        next-id (fn->> (map first) (reduce max -1) inc)
+        with-empty (reaction (conj (vec @tags-ra)
+                                   [(next-id @tags-ra) ""]))]
     (fn tag-inputs-view-infn []
       (kioo/component "templates/sandbox.html" [:#tag-list-group]
         {[:.form-inline]

@@ -4,6 +4,7 @@
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]
             re-frame.handlers
+            [re-frame.middleware :as middleware]
             [re-frame.utils :as rf-utils]
             [theatralia.queries :as queries]
             [theatralia.thomsky :as tsky]
@@ -74,21 +75,21 @@
     k v}])
 (th-utils/register-handler* set-scratch-val)
 
+;; TODO: Rename index to s-id (serial ID) or something similar. (RM 2015-08-28)
 (defn new-tag
   [db [index]]
-  (let [existing-tags (d/q queries/tags-query db)]
-    [{:db/id -1
-      :tag/index index
-      :tag/content ""}]))
-(th-utils/register-handler* new-tag)
+  [{:db/id -1
+    :tag/index index
+    :tag/content ""}])
+(th-utils/register-handler* new-tag [middleware/debug])
 
 (defn remove-tag
   [db [index]]
   [[:db.fn/retractEntity [:tag/index index]]])
-(th-utils/register-handler* remove-tag)
+(th-utils/register-handler* remove-tag [middleware/debug])
 
 (defn tag-change
   [db [index tag]]
   [{:db/id [:tag/index index]
     :tag/content tag}])
-(th-utils/register-handler* tag-change)
+(th-utils/register-handler* tag-change [middleware/debug])
