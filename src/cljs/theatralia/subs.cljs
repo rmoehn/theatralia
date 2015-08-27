@@ -1,8 +1,7 @@
 (ns theatralia.subs
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [theatralia
-             [thomsky :as tsky]
-             [utils :as th-utils :include-macros true]]))
+  (:require [theatralia.thomsky :as tsky]
+            [theatralia.utils :as th-utils :include-macros true]))
 
 (defn get-scratch-entid
   "Entity ID of the scratch area with SCRATCH-KEY as the value of its

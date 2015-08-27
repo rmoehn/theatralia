@@ -3,9 +3,8 @@
             [datascript :as d]
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]
-            [theatralia
-             [thomsky :as tsky]
-             [utils :as th-utils]]))
+            [theatralia.thomsky :as tsky]
+            [theatralia.utils :as th-utils]))
 
 ;;;; Various helpers
 

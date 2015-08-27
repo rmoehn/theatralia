@@ -1,9 +1,8 @@
 (ns theatralia.views
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [cljs-uuid-utils.core :as uuid]
-            [kioo
-             core ; so that kioo/component won't cause warnings
-             [reagent :as kioo :include-macros true]]
+            kioo.core ; so that kioo/component won't cause warnings
+            [kioo.reagent :as kioo :include-macros true]
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]))
 
