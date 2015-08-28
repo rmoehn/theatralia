@@ -1,6 +1,9 @@
 (ns theatralia.handlers
+  (:require-macros [plumbing.core :refer [<- fn->]])
   (:require [ajax.core :as ajax]
+            [clojure.string :as string]
             [datascript :as d]
+            [medley.core :as medley]
             [plumbing.core :as plumbing :refer [safe-get]]
             [re-frame.core :as rf]
             re-frame.handlers
@@ -93,3 +96,37 @@
   [{:db/id [:tag/index index]
     :tag/content tag}])
 (th-utils/register-handler* tag-change [middleware/debug])
+
+(defn add-material
+  [db [scratch-entid]]
+  (let [tags (->> (d/q queries/tags-query db)
+                  (map second)
+                  (remove empty?)
+                  distinct)
+        mat-data (->> (d/pull db '[*] scratch-entid)
+                      (plumbing/map-keys (fn->
+                                           name
+                                           (string/replace #"^newMat" "")
+                                           string/lower-case
+                                           keyword))
+                      (<- (select-keys #{:title :uri :comments})
+                          (assoc :tags tags))
+                      (medley/remove-vals empty?))]
+    (ajax/POST "/materials"
+               {:format :edn
+                :params mat-data
+                :handler #(rf/dispatch [:material-added scratch-entid])
+                :error-handler #(rf/dispatch [:request-errored "/materials"
+                                              mat-data %])}))
+  [])
+(th-utils/register-handler* add-material)
+
+(defn retract-entities [db q]
+  (let [eids (d/q q db)]
+    (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
+
+(defn material-added
+  [db [scratch-entid]]
+  [[:db.fn/retractEntity scratch-entid]
+   [:db.fn/call retract-entities '[:find ?e :where [?e :tag/index _]]]])
+(th-utils/register-handler* material-added)

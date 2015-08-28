@@ -135,6 +135,8 @@
 ;;       resulting in E being deleted and a new empty tag input C to appear.
 ;;       Focus is lost because of the temporary existence of E, I think. Fix
 ;;       this some time. (RM 2015-08-28)
+;; TODO: Make the Comments field the forward-tab target instead of the empty tag
+;;       input when on an empty tag input. (RM 2015-08-28)
 (defn tag-inputs-view []
   (let [tags-ra (rf/subscribe [:tags])
         next-id (fn->> (map first) (reduce max -1) inc)
