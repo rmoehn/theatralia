@@ -5,7 +5,8 @@
             kioo.core ; so that kioo/component won't cause warnings
             [kioo.reagent :as kioo :include-macros true]
             [plumbing.core :as plumbing :refer [safe-get]]
-            [re-frame.core :as rf]))
+            [re-frame.core :as rf]
+            [re-frame.utils :as rf-utils]))
 
 ;;; Credits: https://github.com/ckirkendall/kioo
 
@@ -104,6 +105,20 @@
 
 ;;; View for adding materials
 
+(defn- on-tag-input-change [s-id prev-s e]
+  (let [s (value e)]
+    (cond
+      (and (empty? prev-s) (seq s))
+      (do
+        (rf/dispatch [:new-tag s-id])
+        (rf/dispatch [:tag-change s-id s]))
+
+      (and (seq prev-s) (empty? s))
+      (rf/dispatch [:remove-tag s-id])
+
+      :else
+      (rf/dispatch [:tag-change s-id s]))))
+
 (defn tag-view [[serial-id tag]]
   (let [input-id (str "newMatTagInput" serial-id)]
     (kioo/component "templates/sandbox.html" [:.form-inline :> first-child]
@@ -116,27 +131,12 @@
        [:input]
        (kioo/set-attr :id input-id
                       :value tag
-                      ;; Prevent forward-tabbing, because it doesn't make sense.
-                      :onKeyDown #(when (and (= (.-key %) "Tab")
-                                             (not (.-shiftKey %))
-                                             (empty? (value %)))
-                                    (.preventDefault %))
-                      :onChange #(rf/dispatch [:tag-change serial-id (value %)])
-                      :onFocus #(when (empty? (value %))
-                                  (rf/dispatch [:new-tag serial-id]))
-                      :onBlur #(when (empty? (value %))
-                                 (rf/dispatch [:remove-tag serial-id])))})))
+                      :onChange #(on-tag-input-change serial-id tag %))})))
 
-;; TODO: Although we prevent forward-tabbing, the same problem occurs when the
-;;       user is on an empty tag input A and clicks on the empty tag B right of
-;;       it: the entry in the database for A is retracted. This state gets
-;;       rendered as an empty tag input E without database entry. Then the
-;;       :new-tag event causes an entry for B to be added to the database,
-;;       resulting in E being deleted and a new empty tag input C to appear.
-;;       Focus is lost because of the temporary existence of E, I think. Fix
-;;       this some time. (RM 2015-08-28)
-;; TODO: Make the Comments field the forward-tab target instead of the empty tag
-;;       input when on an empty tag input. (RM 2015-08-28)
+;; TODO: Investigate the behaviour that keystrokes get lost when starting to
+;;       type very rapidly on a new tag input. (RM 2015-08-30)
+;; TODO: Prevent focus loss when a tag input becomes empty. For some reason it
+;;       doesn't always occur, though. (RM 2015-08-30)
 (defn tag-inputs-view []
   (let [tags-ra (rf/subscribe [:tags])
         next-id (fn->> (map first) (reduce max -1) inc)
