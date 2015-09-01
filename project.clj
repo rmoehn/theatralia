@@ -31,7 +31,10 @@
                  [com.cemerick/url "0.1.1"]
                  [cljs-ajax "0.3.13"]
                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"]
-                 [com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
+                 [com.datomic/datomic-pro "0.9.5130"
+                  :exclusions [joda-time org.slf4j/slf4j-nop
+                               org.slf4j/slf4j-log4j12]]
+                 [ch.qos.logback/logback-classic "1.0.1"]
                  [datascript "0.11.5"]
                  [beckon "0.1.1"]
 
