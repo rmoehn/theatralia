@@ -128,5 +128,5 @@
 (defn material-added
   [db [scratch-entid]]
   [[:db.fn/retractEntity scratch-entid]
-   [:db.fn/call retract-entities '[:find ?e :where [?e :tag/index _]]]])
+   [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/index _]]]])
 (th-utils/register-handler* material-added)
