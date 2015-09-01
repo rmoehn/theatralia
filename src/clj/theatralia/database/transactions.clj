@@ -28,4 +28,10 @@
   ExecutionException
   (fn [e & args]
     (timbre/error (.getCause e))
-    (throw+ {:type :could-not-add})))
+    (throw+ {:condition :could-not-add})))
+
+(with-handler #'add-material
+  RuntimeException
+  (fn [e & args]
+    (timbre/error "Transaction timed out:" e)
+    (throw+ {:condition :could-not-add})))
