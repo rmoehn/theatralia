@@ -13,7 +13,7 @@ Credits:
     <div id="search-field" class="row">
       <div class="col-lg-6">
         <div class="input-group">
-          <input id="searchInput" ref="search-input" type="search" class="form-control" placeholder="Search for..." autofocus=autofocus formenctype="application/x-www-form-urlencoded">
+          <input id="searchInput" ref="search-input" type="search" class="form-control simple-input" placeholder="Search for..." autofocus=autofocus formenctype="application/x-www-form-urlencoded">
           <span class="input-group-btn">
             <button id="submit" class="btn btn-default" type="button">Go!</button>
           </span>
@@ -32,19 +32,32 @@ Credits:
       <form accept-charset="UTF-8" action="/materials" method="POST">
         <div class="form-group">
           <label for="newMatTitle">Title</label>
-          <input ref="title" class="form-control" id="newMatTitle" placeholder="Sourdough Technology—A Traditional Way for Wholesome Foods: A Review">
+          <input ref="title" class="form-control simple-input" id="newMatTitle" placeholder="Sourdough Technology—A Traditional Way for Wholesome Foods: A Review">
         </div>
         <div class="form-group">
           <label for="newMatURI">Link</label>
-          <input ref="url" type="url" class="form-control" id="newMatURI" placeholder="http://onlinelibrary.wiley.com/doi/10.1111/j.1541-4337.2011.00148.x/pdf">
+          <input ref="url" type="url" class="form-control simple-input" id="newMatURI" placeholder="http://onlinelibrary.wiley.com/doi/10.1111/j.1541-4337.2011.00148.x/pdf">
         </div>
-        <div class="form-group">
-          <label for="newMatTags">Tags</label>
-          <input ref="tags" type="text" class="form-control" id="newMatTags" placeholder="Baking, Sourdough, Microbiology">
+        <div class="form-group" id="tag-list-group">
+          <div class="form-label">Tags</div>
+          <div class="form-inline">
+            <div class="form-group">
+              <label class="sr-only" for="newMatTagInput0">Tag 0</label>
+              <input type="text" class="form-control" id="newMatTagInput0" value="Microbiology">
+            </div>
+            <div class="form-group">
+              <label class="sr-only" for="newMatTagInput1">Tag 1</label>
+              <input type="text" class="form-control" id="newMatTagInput1" value="Baking">
+            </div>
+            <div class="form-group">
+              <label class="sr-only" for="newMatTagInput2">Tag 2</label>
+              <input type="text" class="form-control" id="newMatTagInput2">
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label for="newMatComments">Comments</label>
-          <textarea ref="comments" class="form-control" id="newMatComments" rows="5" placeholder="Excellent resource for taking charge of your sourdough. You'll need a thermometer, though."></textarea>
+          <textarea ref="comments" class="form-control simple-input" id="newMatComments" rows="5" placeholder="Excellent resource for taking charge of your sourdough. You'll need a thermometer, though."></textarea>
         </div>
         <button id="newMatSubmit" type="submit" class="btn btn-default">Save</button>
       </form>

@@ -1,7 +1,8 @@
 (ns theatralia.database.txd-gen
   "Functions for generating Datomic transaction data structures."
   (:require [datomic.api :as d]
-            [medley.core :refer [remove-vals]]))
+            [medley.core :refer [remove-vals]])
+  (:import java.net.URI))
 
 ;;;; Utilities for adding materials
 
@@ -72,7 +73,8 @@
   database or being added during the same transaction."
   (remove-vals nil? {:db/id #db/id[:part/bibliography]
                      :material/title    (m :title)
-                     :material/uri      (m :uri)
+                     :material/uri      (if (contains? m :uri)
+                                          (URI. (m :uri)))
                      :material/comments (m :comments)
                      :material/tags     tag-eids
                      :material/owner    user-eid}))

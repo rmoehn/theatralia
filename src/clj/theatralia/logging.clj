@@ -16,7 +16,14 @@
     component/Lifecycle
     (start [this]
       (timbre/set-config! [:shared-appender-config :spit-filename] log-path)
-      (timbre/set-config! [:appenders :spit :enabled?] true))
+      (timbre/set-config! [:appenders :spit :enabled?] true)
+      ;; Credits: http://stuartsierra.com/2015/05/27/clojure-uncaught-exceptions
+      (Thread/setDefaultUncaughtExceptionHandler
+        (reify Thread$UncaughtExceptionHandler
+          (uncaughtException [_ thread ex]
+            (timbre/error ex "Uncaught exception on" (.getName thread)))))
+      :ready) ; In order to avoid returning nil. (?)
     (stop [this]
+      (Thread/setDefaultUncaughtExceptionHandler nil)
       (swap! timbre/config (constantly timbre/example-config)))))
-        ; Maybe not the nicest way, but timbre doesn't provide for a better one.
+      ; Maybe not the nicest way, but timbre doesn't provide for a better one.

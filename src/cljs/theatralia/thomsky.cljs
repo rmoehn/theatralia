@@ -27,10 +27,10 @@
 ;;
 ;; If the application is getting slow, your first step towards a diagnosis
 ;; should be to uncomment the line below and watch in the console when and how
-;; often bind is called. – If it only gets cold as many times as there are binds
-;; in the code and only on application load, your problem lies something else.
-;; If it gets called more often than that and while the application runs (for
-;; example, when you click or type), there are two likely causes:
+;; often bind is called. – If it only gets called as many times as there are
+;; binds in the code and only on application load, your problem lies somewhere
+;; else. If it gets called more often than that and while the application runs
+;; (for example, when you click or type), there are two likely causes:
 ;;
 ;;  - You've wrapped a call to bind in a reagent.ratom/reaction. In this case
 ;;    bind gets called whenever the app-db changes, which is not what you want.
@@ -38,38 +38,36 @@
 ;;  - You've used a Form-1 component where you should use a Form-2 component.
 ;;    See https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components.
 ;;
-;; If it wasn't repeated bind calls, you might want to filter out scratch
-;; changes. At tag filter-scratch you can find a change that introduced that,
-;; but wasn't needed at the time.
+;; If it wasn't repeated bind calls, you might want to exclude scratch changes
+;; from being checked for novelties. At tag filter-scratch you can find a
+;; commit that introduced that, but wasn't needed at the time.
 (defn bind
-  "Returns a ratom containing the result of query Q on the value of the database
-  behind CONN with the arguments Q-ARGS."
+  "Returns a ratom containing the result of query Q with the arguments Q-ARGS on
+  the value of the database behind CONN."
   [q conn & q-args]
   ;(println "bind called" q) ; Commented out on purpose. – See note above.
   (let [k (uuid/make-random-uuid)
         state (reagent/atom nil)
         res (apply d/q q @conn q-args)]
     (reset! state res)
-    (d/listen!
-      conn
-      k
-      (fn [tx-report]
-        (let [novelty (apply d/q q (:tx-data tx-report) q-args)]
-          ;; Only update if query results actually changed.
-          (when (not-empty novelty)
-            (reset! state (apply d/q q (:db-after tx-report) q-args))))))
+    (d/listen! conn k
+               (fn [tx-report]
+;                 (println tx-report)
+                 (let [new-result (apply d/q q (:db-after tx-report) q-args)]
+                   (when (not= new-result @state)
+                     (reset! state new-result)))))
     (set! (.-__key state) k)
     state))
 
 (defn unbind
-  "Stops updates on ratom STATE from changes in CONN."
+  "Stops changes in CONN from causing updates of ratom STATE."
   [conn state]
   (d/unlisten! conn (.-__key state)))
 
 (defn pure-datascript
   "Adaptation of the re-frame middleware 'pure' for Thomsky.
 
-  The HANDLER wrapped with this middleware will receive the current value behind
+  The HANDLER wrapped in this middleware will receive the current value behind
   CONN and has to return a Datascript transaction data structure that will be
   transact!ed over CONN.
 
@@ -90,7 +88,8 @@
       (d/transact! conn txd))))
 
 (defn register-handler
-  "Handler registration procedure that provides the right defaults for Theatralia.
+  "Handler registration procedure that provides the right defaults for
+  Theatralia.
 
   In re-frame, the default handler registration procedure applies only the
   'pure' middleware to a handler. Here we apply the respective 'pure-datascript'

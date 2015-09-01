@@ -1,7 +1,8 @@
+sudo: false
 language: clojure
 lein: lein2
 jdk:
-- openjdk7
+- oraclejdk8
 install: lein uberjar
 script: lein midje
 env:
