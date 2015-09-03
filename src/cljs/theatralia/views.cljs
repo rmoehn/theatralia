@@ -18,55 +18,53 @@
   (-> event .-target .-value))
 
 
-;;;; Fns for dealing with the scratch part of the database
+;;;; Fns for dealing with the key-value area of the database
 
 ;; Instead of a random SQUUID we could also take an argument to use as prefix
-;; and then a random number. Or just the provided scratch-key, but we'd have to
-;; do check for collisions, which could be ugly.
-(defn get-scratch
-  "Adds a scratch entity to the app-db and returns a pair [eid ratom].
+;; and then a random number.
+;; TODO: Make this handle/ratom thing a proper data structure instead of an
+;;       ad-hoc vector. (RM 2015-09-02)
+(defn get-kv-area
+  "Adds an empty key-value area to the app-db and returns a pair [handle ratom].
 
-  eid is the ID of the scratch entity. It has at least one attribute,
-  :scratch/key, a unique key which identifies it. Being a scratch space, you can
-  attach arbitrary other attributes to it. If you get problems with attribute
+  handle is a handle for the key-value area. It has at least one attribute,
+  :kv-area/handle, a unique key which identifies it. The keys have to be
+  keywords. You can put arbitrary values in it. If you get problems with
   values that are collections, have a look at
   https://github.com/tonsky/datascript/issues/69 and at the mayhem around commit
   078546e9.
 
-  ratom is a reactive atom holding all the attributes of the scratch entity."
+  ratom is a reactive atom holding a map with the contents of the key-value
+  area."
   []
-  (let [scratch-key (uuid/make-random-squuid)]
-    (rf/dispatch-sync [:new-scratch scratch-key])
-    (let [scratch-entid @(rf/subscribe [:get-scratch-entid scratch-key])
+  (let [handle (uuid/make-random-squuid)]
+    (rf/dispatch-sync [:kv-area/new handle])
+    [handle (rf/subscribe [:kv-area/as-map handle])]))
 
-          scratch-contents-ra
-          (rf/subscribe [:get-scratch-contents scratch-entid])]
-      [scratch-entid scratch-contents-ra])))
-
-(defn dispatch-scratch
-  "Convenience fn around rf/dispatch. Suppose s is what (get-scratch) returned.
-  Instead of executing (rf/dispatch [some-request-id (first s) param1 …), you
-  can pass the whole s like this: (dispatch-scratch [some-request-id s param1
-  …)."
-  [[request-id [scratch-entid _] & other]]
-  (rf/dispatch (into [request-id scratch-entid] other)))
+(defn dispatch-kv
+  "Convenience fn around rf/dispatch. Suppose k is what (get-kv-area)
+  returned. Instead of executing (rf/dispatch [some-request-id (first k) param1
+  …), you can pass the whole k like this: (dispatch-kv [some-request-id k
+  param1 …)."
+  [[request-id [kv-handle _ :as kva] & other]]
+  (rf/dispatch (into [request-id kv-handle] other)))
 
 
 ;;;; Fn for dealing with text input fields
 
+;; TODO: Pull apart bind-and-set-attr. (RM 2015-09-01)
 (defn bind-and-set-attr
-  "Binds a text input field to the given scratch space in the app-db and adds
-  the ATTRS to its existing attributes."
-  [[scratch-id scratch-ratom] & attrs]
+  "Binds a text input field to the given kv-area in the app-db and adds the
+  ATTRS to the text input's existing attributes."
+  [[kv-handle kv-ratom] & attrs]
   {:pre [(even? (count attrs))]}
   (fn [node]
     (let [id (keyword (plumbing/safe-get-in node [:attrs :id]))
           default-attrs
-          [:value (get @scratch-ratom id "")
-           :onChange #(rf/dispatch [:set-scratch-val scratch-id id (value %)])]]
+          [:value (get @kv-ratom id "")
+           :onChange #(rf/dispatch [:kv-area/set kv-handle id (value %)])]]
       ((apply kioo/set-attr
               (concat default-attrs attrs)) node))))
-
 
 ;;;; Search view
 
@@ -89,19 +87,18 @@
 (defn search-view
   "A group of components for searching materials."
   []
-  (let [scratch (get-scratch)]
+  (let [kv-area (get-kv-area)]
     (fn search-view-infn []
       (kioo/component "templates/sandbox.html" [:#search-field]
         {[:#searchInput]
-         (bind-and-set-attr
-           scratch
-           :onKeyDown
-           #(when (= (.-key %) "Enter")
-              (dispatch-scratch [:search-submitted scratch])))
+         (bind-and-set-attr kv-area
+                            :onKeyDown
+                            #(when (= (.-key %) "Enter")
+                               (dispatch-kv [:search-submitted kv-area])))
 
          [:#submit]
-         (kioo/set-attr :onClick #(dispatch-scratch [:search-submitted
-                                                     scratch]))}))))
+         (kioo/set-attr :onClick #(dispatch-kv [:search-submitted
+                                                kv-area]))}))))
 
 ;;; View for adding materials
 
@@ -149,15 +146,15 @@
 
 ;; TODO: On submit we have to remove duplicate tags. (RM 2015-08-26)
 (defn add-material-view []
-  (let [scratch (get-scratch)]
+  (let [kv-area (get-kv-area)]
     (fn add-material-view-infn []
       (kioo/component "templates/sandbox.html" [:#add-material-form]
         {[:#newMatSubmit]
          (kioo/set-attr
            :onClick (fn [e]
                       (.preventDefault e)
-                      (dispatch-scratch [:add-material scratch])))
-         [:.simple-input] (bind-and-set-attr scratch)
+                      (dispatch-kv [:add-material kv-area])))
+         [:.simple-input] (bind-and-set-attr kv-area)
          [:#tag-list-group] (kioo/substitute [tag-inputs-view])}))))
 
 ;;; Root view

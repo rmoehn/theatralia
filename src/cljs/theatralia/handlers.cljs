@@ -9,6 +9,7 @@
             re-frame.handlers
             [re-frame.middleware :as middleware]
             [re-frame.utils :as rf-utils]
+            [theatralia.db :as db]
             [theatralia.queries :as queries]
             [theatralia.thomsky :as tsky]
             [theatralia.utils :as th-utils :include-macros true]))
@@ -30,8 +31,8 @@
 ;;        2015-07-09)
 (defn search-submitted
   "Send XHR searching for materials. Clear results of current search."
-  [db [scratch-entid]]
-  (let [search-string (pull-single db :searchInput scratch-entid)
+  [db [kv-handle]]
+  (let [search-string (safe-get (db/kv-area-as-map db kv-handle) :searchInput)
         url (str "/gq/" (th-utils/url-encode search-string))
         cur-search-result-eid (d/q '[:find ?e .
                                      :where [?e :search-result _]]
@@ -62,21 +63,32 @@
   [])
 (th-utils/register-handler* request-errored)
 
-(defn new-scratch
-  "Install scratch area with SCRATCH-KEY as its :scratch/key attribute's value."
-  [_ [scratch-key]]
+(defn kv-area-new
+  "Install key-value area identified by HANDLE."
+  [_ [handle]]
   [{:db/id -1
-    :scratch/key scratch-key}])
-(th-utils/register-handler* new-scratch)
+    :kv-area/handle handle}])
+(tsky/register-handler :kv-area/new [middleware/debug] kv-area-new)
 
-(defn set-scratch-val
-  "Set V as the value of key K in the scratch area indentified by
-  SCRATCH-ENTID."
-  [db [scratch-entid k v]]
-  {:pre [scratch-entid (keyword? k)]}
-  [{:db/id scratch-entid
-    k v}])
-(th-utils/register-handler* set-scratch-val)
+(defn kv-area-set
+  "Set V as the value of key K in the key-value area indentified by HANDLE."
+  [db [kv-handle k v]]
+  {:pre [kv-handle v (keyword? k)]}
+  (let [kv-cell-eid (d/q '[:find ?c .
+                           :in $ ?h ?k
+                           :where [?a :kv-area/handle ?h]
+                                  [?a :kv-area/cells ?c]
+                                  [?c :kv-cell/key ?k]]
+                         db kv-handle k)]
+    (if (some? kv-cell-eid)
+      [{:db/id kv-cell-eid
+        :kv-cell/val v}]
+      [{:db/id -1
+        :kv-cell/key k
+        :kv-cell/val v}
+       {:db/id [:kv-area/handle kv-handle]
+        :kv-area/cells -1}])))
+(tsky/register-handler :kv-area/set [middleware/debug] kv-area-set)
 
 ;; TODO: Rename index to s-id (serial ID) or something similar. (RM 2015-08-28)
 (defn new-tag
@@ -98,12 +110,12 @@
 (th-utils/register-handler* tag-change [middleware/debug])
 
 (defn add-material
-  [db [scratch-entid]]
+  [db [kv-handle]]
   (let [tags (->> (d/q queries/tags-query db)
                   (map second)
                   (remove empty?)
                   distinct)
-        mat-data (->> (d/pull db '[*] scratch-entid)
+        mat-data (->> (db/kv-area-as-map db kv-handle)
                       (plumbing/map-keys (fn->
                                            name
                                            (string/replace #"^newMat" "")
@@ -115,18 +127,24 @@
     (ajax/POST "/materials"
                {:format :edn
                 :params mat-data
-                :handler #(rf/dispatch [:material-added scratch-entid])
+                :handler #(rf/dispatch [:material-added kv-handle])
                 :error-handler #(rf/dispatch [:request-errored "/materials"
                                               mat-data %])}))
   [])
 (th-utils/register-handler* add-material)
 
-(defn retract-entities [db q]
-  (let [eids (d/q q db)]
+(defn retract-entities [db q & q-args]
+  (let [eids (apply d/q q db q-args)]
     (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
 
 (defn material-added
-  [db [scratch-entid]]
-  [[:db.fn/retractEntity scratch-entid]
+  [db [kv-handle]]
+  [[:db.fn/retractEntity [:db/id [:kv-area/handle kv-handle]]]
+   [:db.fn/call retract-entities
+    '[:find [?c ...]
+      :in $ ?h
+      :where [?a :kv-area/handle ?h]
+             [?a :kv-area/cells ?c]]
+    kv-handle]
    [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/index _]]]])
 (th-utils/register-handler* material-added)

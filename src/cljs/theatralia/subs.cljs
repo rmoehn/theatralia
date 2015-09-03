@@ -1,27 +1,20 @@
 (ns theatralia.subs
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [datascript :as d]
+            [re-frame.core :as rf]
+            [theatralia.db :as db]
             [theatralia.queries :as queries]
             [theatralia.thomsky :as tsky]
             [theatralia.utils :as th-utils :include-macros true]))
 
-(defn get-scratch-entid
-  "Entity ID of the scratch area with SCRATCH-KEY as the value of its
-  :scratch/key attribute. Assumes that this scratch area already exists."
-  [conn [_ scratch-key]]
-  (let [r (tsky/bind '[:find ?e .
-                       :in $ ?key
-                       :where [?e :scratch/key ?key]]
-                     conn scratch-key)]
-    (assert @r)
-    r))
-(th-utils/register-sub* get-scratch-entid)
+;;;; Simple forwarding subscription handlers
 
-(defn get-scratch-contents
-  "Contents of scratch area with entity ID SCRATCH-ENTID."
-  [conn [_ scratch-entid]]
-  (reaction (d/pull @conn '[*] scratch-entid)))
-(th-utils/register-sub* get-scratch-contents)
+(rf/register-sub :kv-area/as-map
+  (fn [conn [_ handle]]
+    (reaction (db/kv-area-as-map @conn handle))))
+
+
+;;;; Other subscription handlers
 
 (defn search-result
   "Result of the material search."
