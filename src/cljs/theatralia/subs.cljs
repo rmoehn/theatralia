@@ -20,7 +20,7 @@
   "Result of the material search."
   [db []]
   (tsky/bind '[:find [?rs ...]
-               :where [_ :search-result ?rs]]
+               :where [_ :search/result ?rs]]
              db))
 (th-utils/register-sub* search-result)
 

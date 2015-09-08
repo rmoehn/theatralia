@@ -29,13 +29,14 @@
 
 ;; FIXME: Server errors when the search string starts with */%2a. (RM
 ;;        2015-07-09)
+;; TODO: Use retract-entities. (RM 2015-09-03)
 (defn search-submitted
   "Send XHR searching for materials. Clear results of current search."
   [db [kv-handle]]
   (let [search-string (safe-get (db/kv-area-as-map db kv-handle) :searchInput)
         url (str "/gq/" (th-utils/url-encode search-string))
         cur-search-result-eid (d/q '[:find ?e .
-                                     :where [?e :search-result _]]
+                                     :where [?e :search/result _]]
                                    db)]
     (when search-string
       (ajax/GET url
@@ -51,9 +52,9 @@
 (defn search-returned
   "Transact received search result into the database."
   [db [search-result]]
-  (let [entid (d/q '[:find ?e . :where [?e :search-result _]] db)]
+  (let [entid (d/q '[:find ?e . :where [?e :search/result _]] db)]
     [{:db/id (or entid -1)
-      :search-result (set search-result)}]))
+      :search/result (set search-result)}]))
 (th-utils/register-handler* search-returned)
 
 (defn request-errored
