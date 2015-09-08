@@ -91,23 +91,22 @@
         :kv-area/cells -1}])))
 (tsky/register-handler :kv-area/set [middleware/debug] kv-area-set)
 
-;; TODO: Rename index to s-id (serial ID) or something similar. (RM 2015-08-28)
 (defn new-tag
   [db [index]]
   [{:db/id -1
-    :tag/index index
-    :tag/content ""}])
+    :tag/s-id index
+    :tag/text ""}])
 (th-utils/register-handler* new-tag [middleware/debug])
 
 (defn remove-tag
   [db [index]]
-  [[:db.fn/retractEntity [:tag/index index]]])
+  [[:db.fn/retractEntity [:tag/s-id index]]])
 (th-utils/register-handler* remove-tag [middleware/debug])
 
 (defn tag-change
   [db [index tag]]
-  [{:db/id [:tag/index index]
-    :tag/content tag}])
+  [{:db/id [:tag/s-id index]
+    :tag/text tag}])
 (th-utils/register-handler* tag-change [middleware/debug])
 
 (defn add-material
@@ -147,5 +146,5 @@
       :where [?a :kv-area/handle ?h]
              [?a :kv-area/cells ?c]]
     kv-handle]
-   [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/index _]]]])
+   [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
 (th-utils/register-handler* material-added)
