@@ -137,10 +137,12 @@
   (let [eids (apply d/q q db q-args)]
     (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
 
+;; Note: The key-value area for the add-material-view is created when the view
+;;       is created and the view holds on to the handle. Therefore we only clear
+;;       the key-value area, but don't retract the handle.
 (defn material-added
   [db [kv-handle]]
-  [[:db.fn/retractEntity [:db/id [:kv-area/handle kv-handle]]]
-   [:db.fn/call retract-entities
+  [[:db.fn/call retract-entities
     '[:find [?c ...]
       :in $ ?h
       :where [?a :kv-area/handle ?h]
