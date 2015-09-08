@@ -71,6 +71,7 @@
     :kv-area/handle handle}])
 (tsky/register-handler :kv-area/new [middleware/debug] kv-area-new)
 
+;; TODO: Can we use :db.fn/cas? (RM 2015-09-03)
 (defn kv-area-set
   "Set V as the value of key K in the key-value area indentified by HANDLE."
   [db [kv-handle k v]]
@@ -109,6 +110,7 @@
     :tag/text tag}])
 (th-utils/register-handler* tag-change [middleware/debug])
 
+;; REFACTOR: Make this a bit more self-documenting. (RM 2015-09-08)
 (defn add-material
   [db [kv-handle]]
   (let [tags (->> (d/q queries/tags-query db)
@@ -137,6 +139,7 @@
   (let [eids (apply d/q q db q-args)]
     (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
 
+;; REFACTOR: Factor out retracting a key-value area. (RM 2015-09-08)
 ;; Note: The key-value area for the add-material-view is created when the view
 ;;       is created and the view holds on to the handle. Therefore we only clear
 ;;       the key-value area, but don't retract the handle.
@@ -149,4 +152,4 @@
              [?a :kv-area/cells ?c]]
     kv-handle]
    [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
-(th-utils/register-handler* material-added)
+(th-utils/register-handler* material-added [middleware/debug])
