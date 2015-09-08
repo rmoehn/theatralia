@@ -69,7 +69,7 @@
   [_ [handle]]
   [{:db/id -1
     :kv-area/handle handle}])
-(tsky/register-handler :kv-area/new [middleware/debug] kv-area-new-eh)
+(tsky/register-handler :kv-area/new kv-area-new-eh)
 
 ;; TODO: Can we use :db.fn/cas? (RM 2015-09-03)
 (defn kv-area-set-eh
@@ -90,25 +90,25 @@
         :kv-cell/val v}
        {:db/id [:kv-area/handle kv-handle]
         :kv-area/cells -1}])))
-(tsky/register-handler :kv-area/set [middleware/debug] kv-area-set-eh)
+(tsky/register-handler :kv-area/set kv-area-set-eh)
 
 (defn tags-add-empty-eh
   [db [index]]
   [{:db/id -1
     :tag/s-id index
     :tag/text ""}])
-(tsky/register-handler :tags/add-empty [middleware/debug] tags-add-empty-eh)
+(tsky/register-handler :tags/add-empty tags-add-empty-eh)
 
 (defn tags-remove-eh
   [db [index]]
   [[:db.fn/retractEntity [:tag/s-id index]]])
-(tsky/register-handler :tags/remove [middleware/debug] tags-remove-eh)
+(tsky/register-handler :tags/remove tags-remove-eh)
 
 (defn tags-set-eh
   [db [index tag]]
   [{:db/id [:tag/s-id index]
     :tag/text tag}])
-(tsky/register-handler :tags/set [middleware/debug] tags-set-eh)
+(tsky/register-handler :tags/set tags-set-eh)
 
 ;; REFACTOR: Make this a bit more self-documenting. (RM 2015-09-08)
 (defn add-material-submit-eh
@@ -152,4 +152,4 @@
              [?a :kv-area/cells ?c]]
     kv-handle]
    [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
-(tsky/register-handler :add-material/success [middleware/debug] add-material-success-eh)
+(tsky/register-handler :add-material/success add-material-success-eh)
