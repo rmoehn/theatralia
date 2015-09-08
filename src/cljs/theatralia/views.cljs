@@ -66,6 +66,7 @@
       ((apply kioo/set-attr
               (concat default-attrs attrs)) node))))
 
+
 ;;;; Search view
 
 (defn result-item
@@ -100,9 +101,14 @@
          (kioo/set-attr :onClick #(dispatch-kv [:search/submitted
                                                 kv-area]))}))))
 
+
 ;;; View for adding materials
 
-(defn- on-tag-input-change [s-id prev-s e]
+;; MAYBE DE-HACK: Didn't we want to have dump callbacks? Abolish this and make
+;;                an event handler that decides what to do. (RM 2015-09-08)
+(defn- on-tag-input-change
+  "onChange callback for tag input elements."
+  [s-id prev-s e]
   (let [s (value e)]
     (cond
       (and (empty? prev-s) (seq s))
@@ -116,7 +122,9 @@
       :else
       (rf/dispatch [:tags/set s-id s]))))
 
-(defn tag-view [[serial-id tag]]
+(defn tag-view
+  "Renders a single tag input element."
+  [[serial-id tag]]
   (let [input-id (str "newMatTagInput" serial-id)]
     (kioo/component "templates/sandbox.html" [:.form-inline :> first-child]
       {[:*] (kioo/set-attr :key serial-id)
@@ -134,7 +142,9 @@
 ;;       type very rapidly on a new tag input. (RM 2015-08-30)
 ;; TODO: Prevent focus loss when a tag input becomes empty. For some reason it
 ;;       doesn't always occur, though. (RM 2015-08-30)
-(defn tag-inputs-view []
+(defn tag-inputs-view
+  "Renders the tag input elements."
+  []
   (let [tags-ra (rf/subscribe [:add-material/tags])
         next-id (fn->> (map first) (reduce max -1) inc)
         with-empty (reaction (conj (vec @tags-ra)
@@ -145,7 +155,9 @@
          (kioo/content (map tag-view @with-empty))}))))
 
 ;; TODO: On submit we have to remove duplicate tags. (RM 2015-08-26)
-(defn add-material-view []
+(defn add-material-view
+  "Renders to a form through which the user can input new tags."
+  []
   (let [kv-area (get-kv-area)]
     (fn add-material-view-infn []
       (kioo/component "templates/sandbox.html" [:#add-material-form]
@@ -157,6 +169,7 @@
          [:.simple-input] (bind-and-set-attr kv-area)
          [:#tag-list-group] (kioo/substitute [tag-inputs-view])}))))
 
+
 ;;; Root view
 
 (defn root-view
@@ -166,4 +179,3 @@
     {[:#search-field] (kioo/substitute [search-view])
      [:#search-results] (kioo/substitute [result-view])
      [:#add-material-form] (kioo/substitute [add-material-view])}))
-

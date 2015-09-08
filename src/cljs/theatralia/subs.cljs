@@ -1,4 +1,5 @@
 (ns theatralia.subs
+  "Subscription handlers for the Theatralia client."
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [datascript :as d]
             [re-frame.core :as rf]
@@ -25,6 +26,7 @@
 (rf/register-sub :search/result search-result-sh)
 
 (defn add-material-tags-sh
+  "A sequence of [index tag] pairs, sorted by index."
   [db []]
   (let [query-res (tsky/bind queries/tags-query db)]
     (reaction (sort-by first @query-res))))

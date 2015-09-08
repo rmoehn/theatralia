@@ -1,4 +1,9 @@
 (ns theatralia.handlers
+  "Event handlers for the Theatralia client.
+
+  In the following I will write as if the handlers mutated the database, where
+  actually, they only return transaction data. I.e. data that specifies how to
+  mutate the database."
   (:require-macros [plumbing.core :refer [<- fn->]])
   (:require [ajax.core :as ajax]
             [clojure.string :as string]
@@ -23,46 +28,7 @@
   (safe-get (d/pull db [attr] eid) attr))
 
 
-;;;; All the handlers
-
-(re-frame.handlers/register-base :initialize tsky/set-up-datascript!)
-
-;; FIXME: Server errors when the search string starts with */%2a. (RM
-;;        2015-07-09)
-;; TODO: Use retract-entities. (RM 2015-09-03)
-(defn search-submitted-eh
-  "Send XHR searching for materials. Clear results of current search."
-  [db [kv-handle]]
-  (let [search-string (safe-get (db/kv-area-as-map db kv-handle) :searchInput)
-        url (str "/gq/" (th-utils/url-encode search-string))
-        cur-search-result-eid (d/q '[:find ?e .
-                                     :where [?e :search/result _]]
-                                   db)]
-    (when search-string
-      (ajax/GET url
-                {:format :edn
-                 :handler #(rf/dispatch [:search/returned %])
-                 :error-handler #(rf/dispatch [:request/errored url %])}))
-    (if cur-search-result-eid
-      [[:db.fn/retractEntity cur-search-result-eid]]
-      [])))
-(tsky/register-handler :search/submitted search-submitted-eh)
-
-;; TODO: Define a format somewhere. (RM 2015-07-02)
-(defn search-returned-eh
-  "Transact received search result into the database."
-  [db [search-result]]
-  (let [entid (d/q '[:find ?e . :where [?e :search/result _]] db)]
-    [{:db/id (or entid -1)
-      :search/result (set search-result)}]))
-(tsky/register-handler :search/returned search-returned-eh)
-
-(defn request-errored-eh
-  "Report errors of XHRs. Leave database unchanged."
-  [_ [url error-map]]
-  (rf-utils/error "Request to URL " url " errored: " error-map)
-  [])
-(tsky/register-handler :request/errored request-errored-eh)
+;;;; Handlers for events around key-value areas
 
 (defn kv-area-new-eh
   "Install key-value area identified by HANDLE."
@@ -92,26 +58,98 @@
         :kv-area/cells -1}])))
 (tsky/register-handler :kv-area/set kv-area-set-eh)
 
+
+;;;; Miscellaneous handlers
+
+(re-frame.handlers/register-base :initialize tsky/set-up-datascript!)
+
+(defn request-errored-eh
+  "Handles the event that an XHR request errored.
+
+  Reports the error of the XHRs. Leaves database unchanged."
+  [_ [url error-map]]
+  (rf-utils/error "Request to URL " url " errored: " error-map)
+  [])
+(tsky/register-handler :request/errored request-errored-eh)
+
+
+;;;; Handlers for events around the material search
+
+;; FIXME: Server errors when the search string starts with */%2a. (RM
+;;        2015-07-09)
+;; TODO: Use retract-entities. (RM 2015-09-03)
+(defn search-submitted-eh
+  "Handles the event that a search string was submitted.
+
+  The search string should be at the key :searchInput in the key-value area
+  identified by KV-HANDLE.
+
+  Sends XHR, searching for materials. Clears results of current search."
+  [db [kv-handle]]
+  (let [search-string (safe-get (db/kv-area-as-map db kv-handle) :searchInput)
+        url (str "/gq/" (th-utils/url-encode search-string))
+        cur-search-result-eid (d/q '[:find ?e .
+                                     :where [?e :search/result _]]
+                                   db)]
+    (when search-string
+      (ajax/GET url
+                {:format :edn
+                 :handler #(rf/dispatch [:search/returned %])
+                 :error-handler #(rf/dispatch [:request/errored url %])}))
+    (if cur-search-result-eid
+      [[:db.fn/retractEntity cur-search-result-eid]]
+      [])))
+(tsky/register-handler :search/submitted search-submitted-eh)
+
+;; TODO: Define a format somewhere. (RM 2015-07-02)
+(defn search-returned-eh
+  "Handles the event that the server returned search results.
+
+  SEARCH-RESULT should be a sequence of [eid material-title score] tuples.
+
+  Transacts received search result into the database."
+  [db [search-result]]
+  (let [entid (d/q '[:find ?e . :where [?e :search/result _]] db)]
+    [{:db/id (or entid -1)
+      :search/result (set search-result)}]))
+(tsky/register-handler :search/returned search-returned-eh)
+
+
+;;;; Handlers for events around the tags list of the material input form
+
 (defn tags-add-empty-eh
+  "Puts a new empty tag at INDEX into the DB."
   [db [index]]
   [{:db/id -1
     :tag/s-id index
     :tag/text ""}])
 (tsky/register-handler :tags/add-empty tags-add-empty-eh)
 
-(defn tags-remove-eh
-  [db [index]]
-  [[:db.fn/retractEntity [:tag/s-id index]]])
-(tsky/register-handler :tags/remove tags-remove-eh)
-
 (defn tags-set-eh
-  [db [index tag]]
+  "Sets the contents of the tag identified by INDEX to TEXT."
+  [db [index text]]
   [{:db/id [:tag/s-id index]
     :tag/text tag}])
 (tsky/register-handler :tags/set tags-set-eh)
 
+(defn tags-remove-eh
+  "Removes the tag at INDEX from the DB."
+  [db [index]]
+  [[:db.fn/retractEntity [:tag/s-id index]]])
+(tsky/register-handler :tags/remove tags-remove-eh)
+
+
+;;;; Handlers for events around the material input form
+
 ;; REFACTOR: Make this a bit more self-documenting. (RM 2015-09-08)
 (defn add-material-submit-eh
+  "Handles the event that data for a new material were submitted.
+
+  Expects the data to be in the key-value area identified by KV-HANDLE and in
+  the entities in the database. The key-value area can have the following
+  entries: :newMatTitle, :newMatURI, :newMatComments.
+
+  Sends the data to the server. Leaves database unchanged."
   [db [kv-handle]]
   (let [tags (->> (d/q queries/tags-query db)
                   (map second)
@@ -135,21 +173,22 @@
   [])
 (tsky/register-handler :add-material/submit add-material-submit-eh)
 
-(defn retract-entities [db q & q-args]
-  (let [eids (apply d/q q db q-args)]
-    (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
-
 ;; REFACTOR: Factor out retracting a key-value area. (RM 2015-09-08)
 ;; Note: The key-value area for the add-material-view is created when the view
 ;;       is created and the view holds on to the handle. Therefore we only clear
 ;;       the key-value area, but don't retract the handle.
 (defn add-material-success-eh
+  "Handles the event that the server has successfully stored a new material.
+
+  Expects the same data to be present in DB as add-material-success-eh.
+
+  Retracts all those data from the DB."
   [db [kv-handle]]
-  [[:db.fn/call retract-entities
+  [[:db.fn/call db/retract-entities
     '[:find [?c ...]
       :in $ ?h
       :where [?a :kv-area/handle ?h]
              [?a :kv-area/cells ?c]]
     kv-handle]
-   [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
+   [:db.fn/call db/retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
 (tsky/register-handler :add-material/success add-material-success-eh)

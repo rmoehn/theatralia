@@ -17,6 +17,23 @@
     (plumbing/for-map [{k :kv-cell/key v :kv-cell/val} cell-maps]
       k v)))
 
+
+;;;; Transaction functions
+
+;;; These functions are thought to be called within transactions with
+;;; :db.fn/call. They return transaction data.
+
+(defn retract-entities
+  "Retracts entities according to query Q.
+
+  Q with arguments Q-ARGS has to return entity IDs when applied to DB. Returns
+  transaction data that will retract all the entities with those entity IDs from
+  DB."
+  [db q & q-args]
+  (let [eids (apply d/q q db q-args)]
+    (map (fn [eid] [:db.fn/retractEntity eid]) eids)))
+
+
 ;;;; Schema
 
 (def full-schema
