@@ -98,5 +98,5 @@
   ([id handler] (register-handler id [] handler))
   ([id middleware handler]
    (handlers/register-base id
-                           [pure-datascript middleware/trim-v middleware]
+                           [pure-datascript middleware middleware/trim-v]
                            handler)))
