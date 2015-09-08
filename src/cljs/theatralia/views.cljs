@@ -79,7 +79,7 @@
 (defn result-view
   "Material search results."
   []
-  (let [results-ra (rf/subscribe [:search-result])]
+  (let [results-ra (rf/subscribe [:search/result])]
     (fn []
       (kioo/component "templates/sandbox.html" [:#search-results]
         {[:ol] (kioo/content (map result-item @results-ra))}))))
@@ -135,7 +135,7 @@
 ;; TODO: Prevent focus loss when a tag input becomes empty. For some reason it
 ;;       doesn't always occur, though. (RM 2015-08-30)
 (defn tag-inputs-view []
-  (let [tags-ra (rf/subscribe [:tags])
+  (let [tags-ra (rf/subscribe [:add-material/tags])
         next-id (fn->> (map first) (reduce max -1) inc)
         with-empty (reaction (conj (vec @tags-ra)
                                    [(next-id @tags-ra) ""]))]
