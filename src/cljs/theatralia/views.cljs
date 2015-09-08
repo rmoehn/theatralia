@@ -94,10 +94,10 @@
          (bind-and-set-attr kv-area
                             :onKeyDown
                             #(when (= (.-key %) "Enter")
-                               (dispatch-kv [:search-submitted kv-area])))
+                               (dispatch-kv [:search/submitted kv-area])))
 
          [:#submit]
-         (kioo/set-attr :onClick #(dispatch-kv [:search-submitted
+         (kioo/set-attr :onClick #(dispatch-kv [:search/submitted
                                                 kv-area]))}))))
 
 ;;; View for adding materials
@@ -107,14 +107,14 @@
     (cond
       (and (empty? prev-s) (seq s))
       (do
-        (rf/dispatch [:new-tag s-id])
-        (rf/dispatch [:tag-change s-id s]))
+        (rf/dispatch [:tags/add-empty s-id])
+        (rf/dispatch [:tags/set s-id s]))
 
       (and (seq prev-s) (empty? s))
-      (rf/dispatch [:remove-tag s-id])
+      (rf/dispatch [:tags/remove s-id])
 
       :else
-      (rf/dispatch [:tag-change s-id s]))))
+      (rf/dispatch [:tags/set s-id s]))))
 
 (defn tag-view [[serial-id tag]]
   (let [input-id (str "newMatTagInput" serial-id)]
@@ -153,7 +153,7 @@
          (kioo/set-attr
            :onClick (fn [e]
                       (.preventDefault e)
-                      (dispatch-kv [:add-material kv-area])))
+                      (dispatch-kv [:add-material/submit kv-area])))
          [:.simple-input] (bind-and-set-attr kv-area)
          [:#tag-list-group] (kioo/substitute [tag-inputs-view])}))))
 

@@ -30,7 +30,7 @@
 ;; FIXME: Server errors when the search string starts with */%2a. (RM
 ;;        2015-07-09)
 ;; TODO: Use retract-entities. (RM 2015-09-03)
-(defn search-submitted
+(defn search-submitted-eh
   "Send XHR searching for materials. Clear results of current search."
   [db [kv-handle]]
   (let [search-string (safe-get (db/kv-area-as-map db kv-handle) :searchInput)
@@ -41,38 +41,38 @@
     (when search-string
       (ajax/GET url
                 {:format :edn
-                 :handler #(rf/dispatch [:search-returned %])
-                 :error-handler #(rf/dispatch [:request-errored url %])}))
+                 :handler #(rf/dispatch [:search/returned %])
+                 :error-handler #(rf/dispatch [:request/errored url %])}))
     (if cur-search-result-eid
       [[:db.fn/retractEntity cur-search-result-eid]]
       [])))
-(th-utils/register-handler* search-submitted)
+(tsky/register-handler :search/submitted search-submitted-eh)
 
 ;; TODO: Define a format somewhere. (RM 2015-07-02)
-(defn search-returned
+(defn search-returned-eh
   "Transact received search result into the database."
   [db [search-result]]
   (let [entid (d/q '[:find ?e . :where [?e :search/result _]] db)]
     [{:db/id (or entid -1)
       :search/result (set search-result)}]))
-(th-utils/register-handler* search-returned)
+(tsky/register-handler :search/returned search-returned-eh)
 
-(defn request-errored
+(defn request-errored-eh
   "Report errors of XHRs. Leave database unchanged."
   [_ [url error-map]]
   (rf-utils/error "Request to URL " url " errored: " error-map)
   [])
-(th-utils/register-handler* request-errored)
+(tsky/register-handler :request/errored request-errored-eh)
 
-(defn kv-area-new
+(defn kv-area-new-eh
   "Install key-value area identified by HANDLE."
   [_ [handle]]
   [{:db/id -1
     :kv-area/handle handle}])
-(tsky/register-handler :kv-area/new [middleware/debug] kv-area-new)
+(tsky/register-handler :kv-area/new [middleware/debug] kv-area-new-eh)
 
 ;; TODO: Can we use :db.fn/cas? (RM 2015-09-03)
-(defn kv-area-set
+(defn kv-area-set-eh
   "Set V as the value of key K in the key-value area indentified by HANDLE."
   [db [kv-handle k v]]
   {:pre [kv-handle v (keyword? k)]}
@@ -90,28 +90,28 @@
         :kv-cell/val v}
        {:db/id [:kv-area/handle kv-handle]
         :kv-area/cells -1}])))
-(tsky/register-handler :kv-area/set [middleware/debug] kv-area-set)
+(tsky/register-handler :kv-area/set [middleware/debug] kv-area-set-eh)
 
-(defn new-tag
+(defn tags-add-empty-eh
   [db [index]]
   [{:db/id -1
     :tag/s-id index
     :tag/text ""}])
-(th-utils/register-handler* new-tag [middleware/debug])
+(tsky/register-handler :tags/add-empty [middleware/debug] tags-add-empty-eh)
 
-(defn remove-tag
+(defn tags-remove-eh
   [db [index]]
   [[:db.fn/retractEntity [:tag/s-id index]]])
-(th-utils/register-handler* remove-tag [middleware/debug])
+(tsky/register-handler :tags/remove [middleware/debug] tags-remove-eh)
 
-(defn tag-change
+(defn tags-set-eh
   [db [index tag]]
   [{:db/id [:tag/s-id index]
     :tag/text tag}])
-(th-utils/register-handler* tag-change [middleware/debug])
+(tsky/register-handler :tags/set [middleware/debug] tags-set-eh)
 
 ;; REFACTOR: Make this a bit more self-documenting. (RM 2015-09-08)
-(defn add-material
+(defn add-material-submit-eh
   [db [kv-handle]]
   (let [tags (->> (d/q queries/tags-query db)
                   (map second)
@@ -129,11 +129,11 @@
     (ajax/POST "/materials"
                {:format :edn
                 :params mat-data
-                :handler #(rf/dispatch [:material-added kv-handle])
-                :error-handler #(rf/dispatch [:request-errored "/materials"
+                :handler #(rf/dispatch [:add-material/success kv-handle])
+                :error-handler #(rf/dispatch [:request/errored "/materials"
                                               mat-data %])}))
   [])
-(th-utils/register-handler* add-material)
+(tsky/register-handler :add-material/submit add-material-submit-eh)
 
 (defn retract-entities [db q & q-args]
   (let [eids (apply d/q q db q-args)]
@@ -143,7 +143,7 @@
 ;; Note: The key-value area for the add-material-view is created when the view
 ;;       is created and the view holds on to the handle. Therefore we only clear
 ;;       the key-value area, but don't retract the handle.
-(defn material-added
+(defn add-material-success-eh
   [db [kv-handle]]
   [[:db.fn/call retract-entities
     '[:find [?c ...]
@@ -152,4 +152,4 @@
              [?a :kv-area/cells ?c]]
     kv-handle]
    [:db.fn/call retract-entities '[:find [?e ...] :where [?e :tag/s-id _]]]])
-(th-utils/register-handler* material-added [middleware/debug])
+(tsky/register-handler :add-material/success [middleware/debug] add-material-success-eh)
