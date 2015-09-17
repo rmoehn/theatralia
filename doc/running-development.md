@@ -45,16 +45,22 @@ process. Especially the [Leiningen
 setup](http://docs.datomic.com/getting-started.html#lein-setup) step is
 important.
 
+### rlwrap
+
+In order to have a nicer experience with the ClojureScript REPL, you need
+[rlwrap](https://github.com/hanslub42/rlwrap). It's available through most
+package managers.
+
 ## Starting the system
 
  1. Start the Datomic transactor with the dev storage protocol as described
     [here](http://docs.datomic.com/getting-started.html#dev-storage).
- 2. Start automatic ClojureScript compilation (see
-    [below](#automatic-clojurescript-compilation)).
+ 2. Start automatic ClojureScript compilation and loading (see
+    [below](#figwheel)).
 
     ```
-    $ lein cljsbuild auto dev
-    Compiling ClojureScript.
+    $ rlwrap lein figwheel
+    Figweel: Starting server at http://localhost:3449
     ...
     ```
 
@@ -90,11 +96,29 @@ clean way:
  2. Kill or `Strg-C` the automatic ClojureScript compilation and the Datomic
     transactor.
 
-## Automatic ClojureScript compilation
+## Figwheel
 
-The ClojureScript compiler has a mode where it watches your ClojureScript source
-files and automatically compiles them to JavaScript whenever you save a change.
-There are some notes in the
-[README](https://github.com/rmoehn/theatralia#build-system) on how I set this
-up. You might also want to read the ClojureScript [Quick Start
-Guide](https://github.com/clojure/clojurescript/wiki/Quick-Start).
+[lein-figwheel](https://github.com/bhauman/lein-figwheel) is a Leiningen plugin.
+It recompiles ClojureScript code every time you save a ClojureScript file and
+pushes the resulting JavaScript code to the browser. That means, you don't have
+to reload the page when you make a change in the code.
+
+> #### Example
+>
+> You have some code that flashes a line of text in the browser every two
+> seconds. The two seconds are encoded in a `let` statement:
+>
+>
+> ```````clojure
+> (let [interval 2]
+>   ...)
+>
+> ```````
+>
+> You change 2 to 4 and save the file. – The line of text immediately flashes
+> only half as fast.
+
+In my experience, this doesn't always work, though I won't blame it on Figwheel.
+– The cause might be my setup or lack of understanding. – So, if it appears as
+if your changes are not having the effect you expected, try reloading the page
+manually.
