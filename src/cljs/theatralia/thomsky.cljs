@@ -17,8 +17,8 @@
      (reset-meta! app-db (meta conn)))))
 
 ;;; Credits:
-;;;  - https://gist.github.com/allgress/11348685, see here for a bit more
-;;;    discussion:
+;;;  - https://gist.github.com/allgress/11348685, though it isn't complete. See
+;;;    the comments. See here for a bit more discussion:
 ;;;    https://groups.google.com/d/topic/clojurescript/o0W57ptvPc8/discussion
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/middleware.cljs
 ;;;  - https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljs
@@ -41,6 +41,10 @@
 ;; If it wasn't repeated bind calls, you might want to exclude scratch changes
 ;; from being checked for novelties. At tag filter-scratch you can find a
 ;; commit that introduced that, but wasn't needed at the time.
+;;
+;; TODO: When all the querying gets too slow, we have to introduce some
+;;       cleverness. See the links in the credits above and
+;;       https://github.com/tonsky/datascript/pull/12. (RM 2015-09-17)
 (defn bind
   "Returns a ratom containing the result of query Q with the arguments Q-ARGS on
   the value of the database behind CONN."
