@@ -151,15 +151,20 @@ looking for a topic for your next blog post, this might be something.
 
 ## Build system
 
-I cobbled together my `project.clj` and corresponding directory layout following
-some of David Nolen's templates:
-[om-async-tut](https://github.com/swannodette/om-async-tut),
-[mies](https://github.com/swannodette/mies) and
-[mies-om](https://github.com/swannodette/mies-om). For more information you
-should read [The Essence of ClojureScript
-Redux](http://swannodette.github.io/2015/01/02/the-essence-of-clojurescript-redux/)
-and [Waitin'](http://swannodette.github.io/2014/12/22/waitin/) (and maybe the Om
-tutorials).
+It would be hard to describe how my `project.clj` arrived at its current state.
+The only thing I can do is refer you to some places dealing with configuring
+ClojureScript compilation.
+
+ - [ClojureScript Quick
+   Start](https://github.com/clojure/clojurescript/wiki/Quick-Start): doesn't
+   deal with Leiningen, but says it is essential reading.
+ - [Figwheel Quick
+   Start](https://github.com/bhauman/lein-figwheel/wiki/Quick-Start): the
+   [Figwheel](https://github.com/rmoehn/theatralia/blob/master/doc/running-development.md#figwheel)
+   equivalent to the ClojureScript Quick Start guide.
+ - [lein-cljsbuild's sample
+   `project.clj`](https://github.com/emezeske/lein-cljsbuild/blob/master/sample.project.clj):
+   explains all configuration options concerning lein-cljsbuild
 
 ## ->LIVE-SPEC
 
