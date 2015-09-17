@@ -85,6 +85,10 @@
       (kioo/component "templates/sandbox.html" [:#search-results]
         {[:ol] (kioo/content (map result-item @results-ra))}))))
 
+;; TODO: Show a warning when the search string begins with ? or *. – They are
+;;       not allowed in full text queries. On the other hand: we are not going
+;;       to use Datomic full text search as our search anyway. (RM 2015-09-10)
+;; TODO: Prevent empty searches. (RM 2015-09-10)
 (defn search-view
   "A group of components for searching materials."
   []
