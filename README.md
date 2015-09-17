@@ -135,20 +135,6 @@ and »colour« here: I use American Englisch spelling in source code in order to
 prevent bugs, since most programmers are accustomed to American English
 spelling. Everything else is not as critical, so I stay British.)
 
-### Om, Kioo, Bootstrap
-
-I'm using Om and I'm using Bootstrap, but I'm not using [Om
-Bootstrap](http://om-bootstrap.herokuapp.com/). I found that there is a lot of
-stuff in Bootstrap that is not in Om Bootstrap and looking at how to use Om
-Bootstrap I also didn't see huge benefits in using it. So contributing the parts
-I need is out of question.
-
-Instead, since I like [Enlive](https://github.com/cgrand/enlive), I had a look
-at [Kioo](https://github.com/ckirkendall/kioo) and from what I've seen I think
-that using the trio of Om, Kioo and Bootstrap can be powerful and reasonably
-easy. There's no tutorials or anything on this combination though, so if you're
-looking for a topic for your next blog post, this might be something.
-
 ## Build system
 
 It would be hard to describe how my `project.clj` arrived at its current state.
