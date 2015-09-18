@@ -245,6 +245,10 @@ On to the story:
      > template, only contents are changed. And, invisibly, event handlers are
      > added.
 
+ 11. The `search-view` binds the search input field to the database, so that
+     what you type will be stored there. And it installs listeners for when the
+     user hits `Enter` or clicks the Go! button.
+
  11. The rest of the user interface is constructed in a similar way.
 
 ### Doing a search
@@ -254,33 +258,38 @@ This picks up where the last section ended.
  1. You've loaded the sandbox. You click on the search input field. (It might
     have been active before.) You hit `f`.
 
- 2. The `onChange` listener of the `searchInput` element fires. It calls
-    `handle-change` with the event, the key `:text` and the component owning the
-    `searchInput` element.
+ 2. `bind-to-kv-area` had installed an `onChange` callback on the `searchInput`
+    element. The callback is called and dispatches a `:kv-area/set` event with
+    information which entry in which key-value area (call it entry X) is to be
+    set, and the new content: »f«.
 
- 3. `handle-change` sets the value of the local state of the owning component at
-    `:text` to the value of the input element. The local state now is `{:text
-    "f"}`.
+ 3. The re-frame machinery calls `theatralia.handlers/kv-area-set-eh` to handle
+    the event. It returns transaction data to update entry X. The
+    `theatralia.thomsky/pure-datascript` middleware takes care of running the
+    transaction. Entry X now contains the value »f«.
 
- 4. Since `set-state!` triggers a re-render, `search-view`'s `render-state` is
-    called again. We set the `value` attribute of the `searchInput` element to
-    `(:text local-state)`, so the `f` you typed appears in the input field.
+ 4. `search-view` also subscribed to the key-value area, obtaining a reactive
+    atom. `bind-to-kv-area` set the value of the search input field to the
+    content of that reactive atom. Since the transaction changed entry X in the
+    key-value area, the content of the reactive atom also changed. Reagent
+    detects the change and re-renders the search input field, so that it comes
+    to show »f«.
 
- 5. You continue typing `o`, `o`, `d` and behind the scenes the local state is
-    changed to `{:text "food"}` in the same way as described for the first
-    letter..
+ 5. You continue typing `o`, `o`, `d` and behind the scenes entry X is
+    changed to »food«, causing the search input field to be changed to »food«
+    in the same way as described for the first letter.
 
- 6. You hit `Enter`. The `onKeyDown` handler of the `searchInput` element fires
-    and calls `process-input` with the owning component as an argument.
+ 6. You hit `Enter`. The `onKeyDown` callback of the `searchInput` is called
+    and dispatches a `:search/submitted` event.
 
- 7. `process-input` reads the current value of the input field, which is »food«,
-    and sends an XML HTTP request of
+ 7. `theatralia.handlers/search-submitted-eh` reads the content of entry X,
+    currently »food«. It sends an XML HTTP request to the server:
 
     ```
     GET /gq/food
     ```
 
-    to the server. »gq« stands for »general query«.
+    »gq« stands for »general query«.
 
  8. `make-handler` does have a route for `/gq/`. It extracts the text passed
     in the second component of the path and calls `theatralia.routes/search-for`
@@ -291,7 +300,7 @@ This picks up where the last section ended.
     a form of [Datalog](http://docs.datomic.com/query.html).
 
  9. It finds two titles (from
-    [resources/database/sample_data.edn](https://github.com/rmoehn/theatralia/blob/master/resources/database/sample_data.edn)),
+    [resources/database/sample_data.edn](../resources/database/sample_data.edn)),
     represented as a set of maps. It sorts them alphabetically, wraps them in a
     response map and returns them.
 
