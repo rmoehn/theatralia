@@ -129,7 +129,7 @@
   "Sets the contents of the tag identified by INDEX to TEXT."
   [db [index text]]
   [{:db/id [:tag/s-id index]
-    :tag/text tag}])
+    :tag/text text}])
 (tsky/register-handler :tags/set tags-set-eh)
 
 (defn tags-remove-eh
