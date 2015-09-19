@@ -52,19 +52,15 @@
 
 ;;;; Fn for dealing with text input fields
 
-;; TODO: Pull apart bind-and-set-attr. (RM 2015-09-01)
-(defn bind-and-set-attr
-  "Binds a text input field to the given kv-area in the app-db and adds the
-  ATTRS to the text input's existing attributes."
-  [[kv-handle kv-ratom] & attrs]
-  {:pre [(even? (count attrs))]}
+(defn bind-to-kv-area
+  "Binds a text input field to the given kv-area in the app-db."
+  [[kv-handle kv-ratom]]
   (fn [node]
     (let [id (keyword (plumbing/safe-get-in node [:attrs :id]))
-          default-attrs
+          attrs
           [:value (get @kv-ratom id "")
            :onChange #(rf/dispatch [:kv-area/set kv-handle id (value %)])]]
-      ((apply kioo/set-attr
-              (concat default-attrs attrs)) node))))
+      ((apply kioo/set-attr attrs) node))))
 
 
 ;;;; Search view
@@ -96,10 +92,10 @@
     (fn search-view-infn []
       (kioo/component "templates/sandbox.html" [:#search-field]
         {[:#searchInput]
-         (bind-and-set-attr kv-area
-                            :onKeyDown
-                            #(when (= (.-key %) "Enter")
-                               (dispatch-kv [:search/submitted kv-area])))
+         (kioo/do->
+           (bind-to-kv-area kv-area)
+           (kioo/set-attr :onKeyDown #(when (= (.-key %) "Enter")
+                                        (dispatch-kv [:search/submitted kv-area]))))
 
          [:#submit]
          (kioo/set-attr :onClick #(dispatch-kv [:search/submitted
@@ -170,7 +166,7 @@
            :onClick (fn [e]
                       (.preventDefault e)
                       (dispatch-kv [:add-material/submit kv-area])))
-         [:.simple-input] (bind-and-set-attr kv-area)
+         [:.simple-input] (bind-to-kv-area kv-area)
          [:#tag-list-group] (kioo/substitute [tag-inputs-view])}))))
 
 
