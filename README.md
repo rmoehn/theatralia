@@ -2,21 +2,13 @@
 
 # theatralia
 
-This application is under development and not usable yet. If you're interested
-in collaborating, read the documentation (which is becoming quite extensive) and
-contact me.
-
-The project uses [Midje](https://github.com/marick/Midje/).
-
-## How to run the tests (introduced by template)
-
-`lein midje` will run all tests.
-
-`lein midje namespace.*` will run only tests beginning with "namespace.".
-
-`lein midje :autotest` will run all the tests indefinitely. It sets up a
-watcher on the code files. If they change, only the relevant tests will be
-run again.
+This is the rudiment of a research notebook for the humanities. The project
+owner and I decided to discontinue development, because we're lacking the
+resources to bring it to a close within a reasonable timespan. At the moment
+(2015-10-03) it shows off and
+[documents](https://github.com/rmoehn/theatralia/tree/update-docs) some of the
+basics of a modern Clojure/ClojureScript web application. I expect these to
+become outdated soon, though.
 
 ## Documentation overview
 
